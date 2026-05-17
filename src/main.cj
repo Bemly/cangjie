@@ -5,7 +5,6 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
-import std.time.*
 import stdx.net.http.*
 
 
@@ -136,19 +135,16 @@ func turnstilePage(): String {
 
 func extractJsonString(json: String, key: String): String {
     var search = "\"" + key + "\":\""
-    var startOpt = json.indexOf(search)
-    var start = startOpt ?? -1
-    if (start < 0) {
+    var parts = json.split(search)
+    if (parts.size < 2) {
         return ""
     }
-    start = start + search.size
-    var remain = json.substring(start)
-    var endOpt = remain.indexOf("\"")
-    var end = endOpt ?? -1
-    if (end < 0) {
+    var rest = parts[1]
+    var endParts = rest.split("\"")
+    if (endParts.size < 1) {
         return ""
     }
-    return remain.substring(0, end)
+    return endParts[0]
 }
 
 func verifyTurnstileToken(token: String, secret: String): Bool {
