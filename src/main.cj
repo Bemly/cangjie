@@ -222,19 +222,18 @@ main(args: Array<String>): Int64 {
         var len = context.request.body.read(buf)
         var bodyStr = String.fromUtf8(buf.slice(0, len))
         var jsonVal = JsonValue.fromStr(bodyStr)
-        var jsonObj = (jsonVal as JsonObject) ?? {
-            context.response.statusCode = 400
-            context.response.write("bad request")
-            return
-        }
-        var tokenVal = jsonObj.get("token") ?? {
-            context.response.statusCode = 400
-            context.response.write("bad request")
-            return
-        }
+        var jsonObjOpt = jsonVal as JsonObject
+        var jsonObj = jsonObjOpt.getOrElse(JsonObject())
+        var tokenVal = jsonObj.get("token").getOrElse(JsonNull())
         var tokenStr = (tokenVal as JsonString).toString()
-        if (tokenStr.startsWith("\"")) {
-            tokenStr = tokenStr.slice(1, tokenStr.size - 1)
+        var n = tokenStr.size
+        if (n >= 2 && tokenStr.slice(0, 1) == "\"" && tokenStr.slice(n - 1, n) == "\"") {
+            tokenStr = tokenStr.slice(1, n - 1)
+        }
+        if (tokenStr == "" || tokenStr == "null") {
+            context.response.statusCode = 400
+            context.response.write("bad request")
+            return
         }
         if (verifyTurnstileToken(tokenStr)) {
             var opts = CookieOptions(
