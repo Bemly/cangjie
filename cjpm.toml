@@ -19,6 +19,6 @@ soulsoft_extensions_injection = "1.0.20260401"
 
 [target]
 [target.x86_64-unknown-linux-gnu]
-compile-option = "-Woff unused --diagnostic-format=noColor -Woff deprecated -ldl -lcangjie-dynamicLoader-opensslFFI"
+compile-option = "-ldl -lcangjie-dynamicLoader-opensslFFI"
 [target.x86_64-unknown-linux-gnu.bin-dependencies]
 path-option = [ "${CANGJIE_STDX_PATH}" ]
