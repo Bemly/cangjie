@@ -6,6 +6,7 @@ import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
 import stdx.net.http.*
+import stdx.net.tls.*
 
 
 let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
@@ -227,7 +228,8 @@ main(args: Array<String>): Int64 {
             context.response.write("no_secret " + dbg)
             return
         }
-        var client = ClientBuilder().build()
+        var tlsConfig = TlsClientConfig()
+        var client = ClientBuilder().tlsConfig(tlsConfig).build()
         var bodyStr = "secret=" + secret + "&response=" + tokenStr
         var bodyBytes = bodyStr.toArray()
         var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", bodyBytes)
