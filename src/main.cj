@@ -5,7 +5,8 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
-import std.env.*
+import std.env.Env
+import std.time.*
 import stdx.net.http.*
 import stdx.encoding.json.*
 
@@ -151,9 +152,16 @@ func verifyTurnstileToken(token: String): Bool {
     var len = rsp.body.read(buf)
     client.close()
     var json = String.fromUtf8(buf.slice(0, len))
-    var obj = Json.parse(json) ?? return false
-    var success = obj["success"] ?? false
-    return (success as Bool) ?? false
+    var jsonObj = (JsonValue.fromStr(json) as JsonObject)
+    var successOption = jsonObj.get("success")
+    if (successOption == None) {
+        return false
+    }
+    var successVal = successOption.getOrElse(JsonNull())
+    if (successVal is JsonBool) {
+        return successVal == JsonBool(true)
+    }
+    return false
 }
 
 func footer(): String {
@@ -199,7 +207,7 @@ main(args: Array<String>): Int64 {
     host.useRouting()
 
     host.mapGet("/") { context =>
-        if (context.request.cookies.get("cj_token") != null) {
+        if (context.request.cookies.get("cj_token") != None) {
             context.response.write(renderHome())
         } else {
             context.response.write(turnstilePage())
@@ -207,7 +215,7 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/post/{slug}") { context =>
-        if (context.request.cookies.get("cj_token") != null) {
+        if (context.request.cookies.get("cj_token") != None) {
             let slug = context.request.routeValues.get("slug") ?? ""
             context.response.write(renderPost(slug))
         } else {
@@ -219,15 +227,26 @@ main(args: Array<String>): Int64 {
         var buf = Array<UInt8>(2048, repeat: 0)
         var len = context.request.body.read(buf)
         var bodyStr = String.fromUtf8(buf.slice(0, len))
-        var obj = Json.parse(bodyStr) ?? return
-        var token = obj["token"] ?? ""
-        var tokenStr = (token as String) ?? ""
+        var jsonVal = JsonValue.fromStr(bodyStr)
+        var jsonObj = (jsonVal as JsonObject)
+        var tokenOption = jsonObj.get("token")
+        if (tokenOption == None) {
+            context.response.statusCode = 400
+            context.response.write("bad request")
+            return
+        }
+        var tokenVal = tokenOption.getOrElse(JsonNull())
+        var tokenStr = (tokenVal as JsonString).toString()
+        if (tokenStr.startsWith("\"")) {
+            tokenStr = tokenStr.slice(1, tokenStr.size - 1)
+        }
         if (verifyTurnstileToken(tokenStr)) {
-            var opts = CookieOptions()
-            opts.httpOnly = true
-            opts.secure = true
-            opts.sameSite = SameSite.Lax
-            opts.maxAge = 86400
+            var opts = CookieOptions(
+                httpOnly: true,
+                secure: true,
+                sameSite: CookieSameSiteMode.Lax,
+                maxAge: Duration.day
+            )
             context.response.cookies.append("cj_token", tokenStr, opts)
             context.response.statusCode = 200
             context.response.write("ok")
