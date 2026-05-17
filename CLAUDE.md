@@ -112,6 +112,14 @@ ssh -i "<pem路径>" root@39.98.118.81 systemctl restart bemlyCJWeb
 - `www.bemly.top` — 自签证书，301 跳转到 `bemly.top`
 - HSTS 已关闭
 - IP 直连被阻断，仅域名可访问
+- DNS HTTPS 记录（阿里云控制台）：
+  ```
+  记录类型: HTTPS
+  主机记录: @
+  记录值:   1 . alpn="h3,h2" port="443"
+  ```
+  浏览器解析到该记录后首次连接即优先走 HTTP/3（QUIC），降级才走 h2
+- VPS 安全组需放行 UDP 443，firewalld 需 `firewall-cmd --add-port=443/udp`
 
 ## 注意事项
 
