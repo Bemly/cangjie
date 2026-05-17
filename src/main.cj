@@ -112,8 +112,19 @@ func css(): String {
     """
 }
 
+func footer(): String {
+    var f = "<footer><div class=\"divider\"></div><div class=\"friends\">"
+    f += "<a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a>"
+    f += "<a href=\"https://bemly.moe/\" target=\"_blank\">bemly.moe</a>"
+    f += "</div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | "
+    f += "由<a href=\"https://cangjie-lang.cn/\" style=\"color:#555;text-decoration:none\">仓颉</a>和"
+    f += "<a href=\"https://docs.cangjie-spire.com/\" style=\"color:#555;text-decoration:none\">天擎</a>驱动</p>"
+    f += "<p>&copy; 2024-2026 Bemly_</p></footer>"
+    return f
+}
+
 func layout(title: String, body: String): String {
-    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><div class=\"friends\"><a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a><a href=\"https://bemly.moe/\" target=\"_blank\">bemly.moe</a></div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | 由<a href="https://cangjie-lang.cn/" style="color:#555;text-decoration:none">仓颉</a>和<a href="https://docs.cangjie-spire.com/" style="color:#555;text-decoration:none">天擎</a>驱动</p><p>&copy; 2024-2026 Bemly_</p></footer></body></html>"
+    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + footer() + "</body></html>"
 }
 
 func renderHome(): String {
