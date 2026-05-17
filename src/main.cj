@@ -127,24 +127,10 @@ func turnstilePage(): String {
     p += "<div class=\"logo\">&#x1FAD0;</div><p>请完成人机验证以继续访问</p>"
     p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
     p += "</div></div><script>function onTurnstileDone(token){"
-    p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})})"
+    p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)})"
     p += ".then(function(r){if(r.ok)location.reload();else alert('验证失败，请刷新重试')})}"
     p += "</script></body></html>"
     return p
-}
-
-func extractJsonString(json: String, key: String): String {
-    var search = "\"" + key + "\":\""
-    var parts = json.split(search)
-    if (parts.size < 2) {
-        return ""
-    }
-    var rest = parts[1]
-    var endParts = rest.split("\"")
-    if (endParts.size < 1) {
-        return ""
-    }
-    return endParts[0]
 }
 
 func verifyTurnstileToken(token: String, secret: String): Bool {
@@ -152,8 +138,9 @@ func verifyTurnstileToken(token: String, secret: String): Bool {
         return false
     }
     var client = ClientBuilder().build()
-    var body = "secret=" + secret + "&response=" + token
-    var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", body)
+    var bodyStr = "secret=" + secret + "&response=" + token
+    var bodyBytes = bodyStr.toArray()
+    var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", bodyBytes)
     var buf = Array<UInt8>(1024, repeat: 0)
     var len = rsp.body.read(buf)
     client.close()
@@ -223,10 +210,8 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapPost("/verify-turnstile") { context =>
-        var buf = Array<UInt8>(2048, repeat: 0)
-        var len = context.request.body.read(buf)
-        var bodyStr = String.fromUtf8(buf.slice(0, len))
-        var tokenStr = extractJsonString(bodyStr, "token")
+        var form = context.request.readForm()
+        var tokenStr = form["token"] ?? ""
         if (tokenStr == "") {
             context.response.statusCode = 400
             context.response.write("bad request")
