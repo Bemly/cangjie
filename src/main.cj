@@ -122,23 +122,17 @@ func css(): String {
 }
 
 func turnstilePage(): String {
-    return """
-        <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>人机验证 | 一只蓝莓小果冻</title><style>""" + css() + """</style>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-        </head><body>
-        <div class="turnstile-wrap"><div class="turnstile-box">
-        <div class="logo">&#x1FAD0;</div>
-        <p>请完成人机验证以继续访问</p>
-        <div class="cf-turnstile" data-sitekey=\"""" + SITE_KEY + """\" data-callback="onTurnstileDone"></div>
-        </div></div>
-        <script>
-        function onTurnstileDone(token) {
-            fetch('/verify-turnstile', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})})
-            .then(r => { if (r.ok) location.reload(); else alert('验证失败，请刷新重试'); });
-        }
-        </script>
-        </body></html>"""
+    var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+    p += "<title>人机验证 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
+    p += "<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script>"
+    p += "</head><body><div class=\"turnstile-wrap\"><div class=\"turnstile-box\">"
+    p += "<div class=\"logo\">&#x1FAD0;</div><p>请完成人机验证以继续访问</p>"
+    p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
+    p += "</div></div><script>function onTurnstileDone(token){"
+    p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})})"
+    p += ".then(function(r){if(r.ok)location.reload();else alert('验证失败，请刷新重试')})}"
+    p += "</script></body></html>"
+    return p
 }
 
 func verifyTurnstileToken(token: String): Bool {
