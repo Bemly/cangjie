@@ -110,7 +110,7 @@ func css(): String {
 }
 
 func layout(title: String, body: String): String {
-    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><p>蜀ICP备2024056996号 | Powered by Cangjie + Spire</p><p>&copy; 2026 Blueberry Jelly</p></footer></body></html>"
+    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | Powered by Cangjie + Spire</p><p>&copy; 2026 Blueberry Jelly</p></footer></body></html>"
 }
 
 func renderHome(): String {
@@ -125,7 +125,7 @@ func renderHome(): String {
 func renderPost(slug: String): String {
     for (post in posts) {
         if (post.slug == slug) {
-            var body = "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>" + post.title + "</h1><div class=\"date\">" + post.date + "</div>" + post.content + "</article>"
+            var body = "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>" + post.title + "</h1><div class=\"date\">" + post.date + "</div>" + post.content + "<p style=\"color:#666;font-size:.85rem;margin-top:32px\">转载请注明出处，好人一生平胸</p></article>"
             return layout(post.title, body)
         }
     }
