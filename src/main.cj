@@ -113,11 +113,11 @@ func css(): String {
 }
 
 func layout(title: String, body: String): String {
-    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><div class=\"friends\"><a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a><a href=\"https://bemly.moe/\" target=\"_blank\">bemly.moe</a></div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | Powered by Cangjie + Spire</p><p>&copy; 2026 Blueberry Jelly</p></footer></body></html>"
+    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><div class=\"friends\"><a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a><a href=\"https://bemly.moe/\" target=\"_blank\">bemly.moe</a></div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | 由<a href="https://cangjie-lang.cn/" style="color:#555;text-decoration:none">仓颉</a>和<a href="https://docs.cangjie-spire.com/" style="color:#555;text-decoration:none">天擎</a>驱动</p><p>&copy; 2024-2026 Bemly_</p></footer></body></html>"
 }
 
 func renderHome(): String {
-    var body = "<div class=\"container\"><header><div class=\"logo\">&#x1FAD0;</div><h1>一只蓝莓小果冻</h1><p>Blueberry Jelly &mdash; Tech &amp; Life</p></header><div class=\"posts\">"
+    var body = "<div class=\"container\"><header><div class=\"logo\">&#x1FAD0;</div><h1>一只蓝莓小果冻</h1><p>Bemly_ &mdash; Tech &amp; Life</p></header><div class=\"posts\">"
     for (post in posts) {
         body += "<a class=\"post-card\" href=\"/post/" + post.slug + "\"><h2>" + post.title + "</h2><div class=\"date\">" + post.date + "</div><div class=\"excerpt\">" + post.excerpt + "</div></a>"
     }
