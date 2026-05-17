@@ -188,7 +188,7 @@ func renderPost(slug: String): String {
 main(args: Array<String>): Int64 {
     initPosts()
 
-    let secret = if (args.size > 1) { args[1] } else { "" }
+    let secret = if (args.size > 0) { args[0] } else { "" }
 
     let builder = WebHost.createBuilder(args)
     builder.services.addRouting()
