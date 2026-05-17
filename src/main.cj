@@ -5,12 +5,14 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
+import std.time.*
 import stdx.net.http.*
 import stdx.net.tls.*
 
 
 let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
 let validTokens = HashSet<String>()
+let rateLimit = HashMap<String, DateTime>()
 
 class Post {
     var slug: String
@@ -208,6 +210,20 @@ main(args: Array<String>): Int64 {
             context.response.statusCode = 400
             context.response.write("bad request")
             return
+        }
+        var remoteIp = context.request.remoteAddr
+        var now = DateTime.nowUTC()
+        if (rateLimit.contains(remoteIp)) {
+            var lastTime = rateLimit.get(remoteIp) ?? now
+            if ((now - lastTime).toSeconds() < 30) {
+                context.response.statusCode = 429
+                context.response.write("too many requests")
+                return
+            }
+        }
+        rateLimit.put(remoteIp, now)
+        if (validTokens.size >= 20) {
+            validTokens.clear()
         }
         var tlsConfig = TlsClientConfig()
         var client = ClientBuilder().tlsConfig(tlsConfig).build()
