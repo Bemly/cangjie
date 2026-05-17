@@ -134,24 +134,6 @@ func turnstilePage(): String {
     return p
 }
 
-func verifyTurnstileToken(token: String, secret: String): Bool {
-    if (secret == "") {
-        println("turnstile: secret is empty")
-        return false
-    }
-    println("turnstile: calling cloudflare api")
-    var client = ClientBuilder().build()
-    var bodyStr = "secret=" + secret + "&response=" + token
-    var bodyBytes = bodyStr.toArray()
-    var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", bodyBytes)
-    var buf = Array<UInt8>(1024, repeat: 0)
-    var len = rsp.body.read(buf)
-    client.close()
-    var respStr = String.fromUtf8(buf.slice(0, len))
-    println("turnstile: cloudflare response = " + respStr)
-    return respStr.contains("\"success\":true") || respStr.contains("\"success\": true")
-}
-
 func footer(): String {
     var f = "<footer><div class=\"divider\"></div><div class=\"friends\">"
     f += "<a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a>"
@@ -219,31 +201,25 @@ main(args: Array<String>): Int64 {
         var rawBody = String.fromUtf8(buf.slice(0, len))
         var parts = rawBody.split("token=")
         var tokenStr = if (parts.size > 1) { parts[1] } else { "" }
-        var dbg = "blen=" + len.toString() + " tlen=" + tokenStr.size.toString()
-        if (tokenStr == "") {
-            context.response.write("bad " + dbg)
-            return
-        }
-        if (secret == "") {
-            context.response.write("no_secret " + dbg)
+        if (tokenStr == "" || secret == "") {
+            context.response.statusCode = 400
+            context.response.write("bad request")
             return
         }
         var tlsConfig = TlsClientConfig()
         var client = ClientBuilder().tlsConfig(tlsConfig).build()
         var bodyStr = "secret=" + secret + "&response=" + tokenStr
-        var bodyBytes = bodyStr.toArray()
         var req = HttpRequestBuilder()
             .method("POST")
             .url("https://challenges.cloudflare.com/turnstile/v0/siteverify")
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .body(bodyBytes)
+            .body(bodyStr.toArray())
             .build()
         var rsp = client.send(req)
         var rbuf = Array<UInt8>(1024, repeat: 0)
         var rlen = rsp.body.read(rbuf)
         client.close()
         var respStr = String.fromUtf8(rbuf.slice(0, rlen))
-        dbg += " cf=" + respStr
         if (respStr.contains("\"success\":true") || respStr.contains("\"success\": true")) {
             var opts = CookieOptions(
                 httpOnly: true,
@@ -252,9 +228,10 @@ main(args: Array<String>): Int64 {
                 maxAge: Duration.day
             )
             context.response.cookies.append("cj_token", tokenStr, opts)
-            context.response.write("ok " + dbg)
+            context.response.write("ok")
         } else {
-            context.response.write("deny " + dbg)
+            context.response.statusCode = 403
+            context.response.write("forbidden")
         }
     }
 
