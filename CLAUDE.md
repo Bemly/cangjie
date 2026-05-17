@@ -32,7 +32,7 @@
 
 ### VPS (生产环境)
 - 系统: Arch Linux, 400MB RAM, 20GB 磁盘
-- 服务: Caddy (:443, 自动 Let's Encrypt) → Spire 博客 (:5000)
+- 服务: Caddy (:443, 自动 Let's Encrypt) → Spire 博客 (:996), :80 → :443 重定向, IP 直连被阻断
 - 博客 systemd 服务名: `blueberry-blog`
 - 博客二进制路径: `/opt/blog/blueberry-blog`
 - CANGJIE_HOME: `/home/cangjie`
@@ -54,10 +54,9 @@
 ├── sdk/                       # Cangjie SDK 归档
 │   ├── cangjie/               # 解压的 SDK (envsetup.sh 在此)
 │   └── cangjie-stdx-*/        # STDX 扩展库
-├── cangjie/                   # 本仓库 — GitHub bemly/cangjie 的 clone
-│   └── spire-blog/            # Spire 博客源码
-│       ├── cjpm.toml
-│       └── src/main.cj
+└── cangjie/                   # 本仓库 — GitHub bemly/cangjie 的 clone，即 cjpm 项目根
+    ├── cjpm.toml
+    └── src/main.cj
 ├── spire-doc/                 # Spire 天擎框架 API 文档 (gitcode)
 ├── cangjie-docs/              # Cangjie SDK 标准库文档 (gitcode)
 └── cangjie-stdx-doc/          # Cangjie STDX 拓展标准库 + 文档 (gitcode)
@@ -67,14 +66,14 @@
 
 ```bash
 # 1. NAS 上编译（用 envsetup.sh 自动配置环境）
-cd /vol1/1000/仓颉网站开发/cangjie/spire-blog
+cd /vol1/1000/仓颉网站开发/cangjie
 source /vol1/1000/仓颉网站开发/sdk/cangjie/envsetup.sh
 export CANGJIE_STDX_PATH=/vol1/1000/仓颉网站开发/sdk/cangjie-stdx-linux-x64-1.1.0.1/linux_x86_64_cjnative/static/stdx
 cjpm update
 cjpm build
 
 # 2. 从 NAS 下载二进制到本机 Mac，再上传 VPS（NAS 无 VPS 密钥）
-scp bemly@192.168.1.162:/vol1/1000/仓颉网站开发/cangjie/spire-blog/target/release/bin/main /tmp/blueberry-blog
+scp bemly@192.168.1.162:/vol1/1000/仓颉网站开发/cangjie/target/release/bin/main /tmp/blueberry-blog
 scp -i "<pem路径>" /tmp/blueberry-blog root@39.98.118.81:/opt/blog/blueberry-blog
 rm /tmp/blueberry-blog
 
