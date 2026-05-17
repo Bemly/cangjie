@@ -216,8 +216,6 @@ main(args: Array<String>): Int64 {
         var buf = Array<UInt8>(2048, repeat: 0)
         var len = context.request.body.read(buf)
         var rawBody = String.fromUtf8(buf.slice(0, len))
-        context.response.write("debug: body=[" + rawBody + "] len=" + len.toString())
-        return
         var parts = rawBody.split("token=")
         var tokenStr = if (parts.size > 1) { parts[1] } else { "" }
         if (tokenStr == "") {
@@ -225,8 +223,7 @@ main(args: Array<String>): Int64 {
             context.response.write("bad request")
             return
         }
-        var ok = verifyTurnstileToken(tokenStr, secret)
-        if (ok) {
+        if (verifyTurnstileToken(tokenStr, secret)) {
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,
