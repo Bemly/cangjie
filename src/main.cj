@@ -5,10 +5,8 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
-import std.env.*
 import std.time.*
 import stdx.net.http.*
-import stdx.encoding.json.*
 
 
 let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
@@ -136,8 +134,22 @@ func turnstilePage(): String {
     return p
 }
 
-func verifyTurnstileToken(token: String): Bool {
-    let secret = getEnv("TURNSTILE_SECRET") ?? ""
+func extractJsonString(json: String, key: String): String {
+    var search = "\"" + key + "\":\""
+    var start = json.indexOf(search)
+    if (start < 0) {
+        return ""
+    }
+    start = start + search.size
+    var remain = json.slice(start, json.size)
+    var end = remain.indexOf("\"")
+    if (end < 0) {
+        return ""
+    }
+    return remain.slice(0, end)
+}
+
+func verifyTurnstileToken(token: String, secret: String): Bool {
     if (secret == "") {
         return false
     }
@@ -151,11 +163,8 @@ func verifyTurnstileToken(token: String): Bool {
     var buf = Array<UInt8>(1024, repeat: 0)
     var len = rsp.body.read(buf)
     client.close()
-    var json = String.fromUtf8(buf.slice(0, len))
-    var jsonVal = JsonValue.fromStr(json)
-    var jsonObj = (jsonVal as JsonObject) ?? return false
-    var successVal = jsonObj.get("success") ?? JsonNull()
-    return (successVal is JsonBool) && (successVal == JsonBool(true))
+    var respStr = String.fromUtf8(buf.slice(0, len))
+    return respStr.contains("\"success\":true") || respStr.contains("\"success\": true")
 }
 
 func footer(): String {
@@ -195,6 +204,8 @@ func renderPost(slug: String): String {
 main(args: Array<String>): Int64 {
     initPosts()
 
+    let secret = if (args.size > 1) { args[1] } else { "" }
+
     let builder = WebHost.createBuilder(args)
     builder.services.addRouting()
     let host = builder.build()
@@ -221,21 +232,13 @@ main(args: Array<String>): Int64 {
         var buf = Array<UInt8>(2048, repeat: 0)
         var len = context.request.body.read(buf)
         var bodyStr = String.fromUtf8(buf.slice(0, len))
-        var jsonVal = JsonValue.fromStr(bodyStr)
-        var jsonObjOpt = jsonVal as JsonObject
-        var jsonObj = jsonObjOpt.getOrElse(JsonObject())
-        var tokenVal = jsonObj.get("token").getOrElse(JsonNull())
-        var tokenStr = (tokenVal as JsonString).toString()
-        var n = tokenStr.size
-        if (n >= 2 && tokenStr.slice(0, 1) == "\"" && tokenStr.slice(n - 1, n) == "\"") {
-            tokenStr = tokenStr.slice(1, n - 1)
-        }
-        if (tokenStr == "" || tokenStr == "null") {
+        var tokenStr = extractJsonString(bodyStr, "token")
+        if (tokenStr == "") {
             context.response.statusCode = 400
             context.response.write("bad request")
             return
         }
-        if (verifyTurnstileToken(tokenStr)) {
+        if (verifyTurnstileToken(tokenStr, secret)) {
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,
