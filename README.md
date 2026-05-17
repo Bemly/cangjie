@@ -1,6 +1,8 @@
 一只蓝莓小果冻 🫐
 =============
 
+*[English](README.en.md)*
+
 个人博客，100% 仓颉语言 + Spire 天擎框架开发。
 
 **域名**: [bemly.top](https://bemly.top)
@@ -20,6 +22,7 @@
 ├── cjpm.toml          # 仓颉包配置
 ├── src/
 │   └── main.cj        # 博客源码
+├── Caddyfile          # Caddy Web 服务器配置
 ├── LICENSE            # MulanPubL-2.0
 └── CLAUDE.md          # Claude Code 工作指引
 ```

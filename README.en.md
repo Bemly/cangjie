@@ -1,5 +1,7 @@
 # Blueberry Jelly 🫐
 
+*[中文](README.md)*
+
 A personal blog built with 100% Cangjie language + Spire framework.
 
 **Domain**: [bemly.top](https://bemly.top)
@@ -17,6 +19,7 @@ A personal blog built with 100% Cangjie language + Spire framework.
 ├── cjpm.toml          # Cangjie package manifest
 ├── src/
 │   └── main.cj        # Blog source code
+├── Caddyfile          # Caddy web server config
 ├── LICENSE            # MulanPubL-2.0
 └── CLAUDE.md          # Claude Code guide
 ```

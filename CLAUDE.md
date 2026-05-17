@@ -47,7 +47,7 @@
 - **连接方式**: 见记忆 `vps-access.md`
 
 ### NAS (编译环境)
-- 系统: Linux x86_64 (群晖 DSM)
+- 系统: Linux x86_64 (飞牛 FnOS)
 - 项目路径: `/vol1/1000/仓颉网站开发/`
 - Cangjie SDK: `/vol1/1000/仓颉网站开发/sdk/cangjie/`
 - Cangjie STDX: `/vol1/1000/仓颉网站开发/sdk/cangjie-stdx-linux-x64-1.1.0.1/`
