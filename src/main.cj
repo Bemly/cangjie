@@ -135,8 +135,10 @@ func turnstilePage(): String {
 
 func verifyTurnstileToken(token: String, secret: String): Bool {
     if (secret == "") {
+        println("turnstile: secret is empty")
         return false
     }
+    println("turnstile: calling cloudflare api")
     var client = ClientBuilder().build()
     var bodyStr = "secret=" + secret + "&response=" + token
     var bodyBytes = bodyStr.toArray()
@@ -145,6 +147,7 @@ func verifyTurnstileToken(token: String, secret: String): Bool {
     var len = rsp.body.read(buf)
     client.close()
     var respStr = String.fromUtf8(buf.slice(0, len))
+    println("turnstile: cloudflare response = " + respStr)
     return respStr.contains("\"success\":true") || respStr.contains("\"success\": true")
 }
 
@@ -210,14 +213,18 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapPost("/verify-turnstile") { context =>
+        println("turnstile: received verify request")
         var form = context.request.readForm()
-        var tokenStr = form["token"] ?? ""
+        var tokenStr = form.get("token") ?? ""
+        println("turnstile: token length = " + tokenStr.size.toString())
         if (tokenStr == "") {
             context.response.statusCode = 400
             context.response.write("bad request")
             return
         }
-        if (verifyTurnstileToken(tokenStr, secret)) {
+        var ok = verifyTurnstileToken(tokenStr, secret)
+        println("turnstile: cloudflare result = " + ok.toString())
+        if (ok) {
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,
