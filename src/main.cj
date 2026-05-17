@@ -5,7 +5,7 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
-import std.convert.*
+
 
 class Post {
     var slug: String
@@ -109,7 +109,7 @@ func css(): String {
     """
 }
 
-func layout(title: String, body: String, backLink: String): String {
+func layout(title: String, body: String): String {
     return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><p>蜀ICP备2024056996号 | Powered by Cangjie + Spire</p><p>&copy; 2026 Blueberry Jelly</p></footer></body></html>"
 }
 
@@ -119,17 +119,17 @@ func renderHome(): String {
         body += "<a class=\"post-card\" href=\"/post/" + post.slug + "\"><h2>" + post.title + "</h2><div class=\"date\">" + post.date + "</div><div class=\"excerpt\">" + post.excerpt + "</div></a>"
     }
     body += "</div></div>"
-    return layout("首页", body, "")
+    return layout("首页", body)
 }
 
 func renderPost(slug: String): String {
     for (post in posts) {
         if (post.slug == slug) {
             var body = "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>" + post.title + "</h1><div class=\"date\">" + post.date + "</div>" + post.content + "</article>"
-            return layout(post.title, body, "<a href=\"/\">返回</a>")
+            return layout(post.title, body)
         }
     }
-    return layout("未找到", "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>404</h1><p>文章不存在</p></article>", "")
+    return layout("未找到", "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>404</h1><p>文章不存在</p></article>")
 }
 
 main(args: Array<String>): Int64 {
