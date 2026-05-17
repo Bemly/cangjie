@@ -213,17 +213,19 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapPost("/verify-turnstile") { context =>
-        println("turnstile: received verify request")
-        var form = context.request.readForm()
-        var tokenStr = form.get("token") ?? ""
-        println("turnstile: token length = " + tokenStr.size.toString())
+        var buf = Array<UInt8>(2048, repeat: 0)
+        var len = context.request.body.read(buf)
+        var rawBody = String.fromUtf8(buf.slice(0, len))
+        content.response.write("debug: body=[" + rawBody + "] len=" + len.toString())
+        return
+        var parts = rawBody.split("token=")
+        var tokenStr = if (parts.size > 1) { parts[1] } else { "" }
         if (tokenStr == "") {
             context.response.statusCode = 400
             context.response.write("bad request")
             return
         }
         var ok = verifyTurnstileToken(tokenStr, secret)
-        println("turnstile: cloudflare result = " + ok.toString())
         if (ok) {
             var opts = CookieOptions(
                 httpOnly: true,
