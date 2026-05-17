@@ -1,0 +1,13 @@
+# Dependencies
+target/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cangjie
+*.cjo
