@@ -221,7 +221,7 @@ main(args: Array<String>): Int64 {
                 return
             }
         }
-        rateLimit.put(remoteIp, now)
+        rateLimit.add(remoteIp, now)
         if (validTokens.size >= 20) {
             validTokens.clear()
         }
