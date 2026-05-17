@@ -10,6 +10,7 @@ import stdx.net.tls.*
 
 
 let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
+let validTokens = HashSet<String>()
 
 class Post {
     var slug: String
@@ -179,7 +180,8 @@ main(args: Array<String>): Int64 {
     host.useRouting()
 
     host.mapGet("/") { context =>
-        if (context.request.cookies.get("cj_token") != None) {
+        let cookieVal = context.request.cookies.get("cj_token") ?? ""
+        if (cookieVal != "" && validTokens.contains(cookieVal)) {
             context.response.write(renderHome())
         } else {
             context.response.write(turnstilePage())
@@ -187,7 +189,8 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/post/{slug}") { context =>
-        if (context.request.cookies.get("cj_token") != None) {
+        let cookieVal = context.request.cookies.get("cj_token") ?? ""
+        if (cookieVal != "" && validTokens.contains(cookieVal)) {
             let slug = context.request.routeValues.get("slug") ?? ""
             context.response.write(renderPost(slug))
         } else {
@@ -221,6 +224,7 @@ main(args: Array<String>): Int64 {
         client.close()
         var respStr = String.fromUtf8(rbuf.slice(0, rlen))
         if (respStr.contains("\"success\":true") || respStr.contains("\"success\": true")) {
+            validTokens.add(tokenStr)
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,
