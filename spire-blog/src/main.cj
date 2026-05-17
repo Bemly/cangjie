@@ -149,6 +149,6 @@ main(args: Array<String>): Int64 {
         context.response.write(renderPost(slug))
     }
 
-    host.run("http://127.0.0.1:80")
+    host.run("http://127.0.0.1:996")
     return 0
 }
