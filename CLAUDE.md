@@ -32,7 +32,12 @@
 
 ### VPS (生产环境)
 - 系统: Arch Linux, 400MB RAM, 20GB 磁盘
-- 服务: Caddy (:443, 自动 Let's Encrypt) → Spire 博客 (:996), :80 → :443 重定向, IP 直连被阻断
+- 服务:
+  - Caddy :443 → Spire :996（bemly.top，Let's Encrypt 证书）
+  - Caddy :80 → :443 重定向
+  - www.bemly.top 自签证书 → 301 跳转 bemly.top
+  - IP 直连被阻断（Caddy abort）
+  - HSTS 已关闭
 - 博客 systemd 服务名: `blueberry-blog`
 - 博客二进制路径: `/opt/blog/blueberry-blog`
 - CANGJIE_HOME: `/home/cangjie`
@@ -54,9 +59,9 @@
 ├── sdk/                       # Cangjie SDK 归档
 │   ├── cangjie/               # 解压的 SDK (envsetup.sh 在此)
 │   └── cangjie-stdx-*/        # STDX 扩展库
-└── cangjie/                   # 本仓库 — GitHub bemly/cangjie 的 clone，即 cjpm 项目根
-    ├── cjpm.toml
-    └── src/main.cj
+├── cangjie/                   # 本仓库 — GitHub bemly/cangjie 的 clone，即 cjpm 项目根
+│   ├── cjpm.toml
+│   └── src/main.cj
 ├── spire-doc/                 # Spire 天擎框架 API 文档 (gitcode)
 ├── cangjie-docs/              # Cangjie SDK 标准库文档 (gitcode)
 └── cangjie-stdx-doc/          # Cangjie STDX 拓展标准库 + 文档 (gitcode)
@@ -83,14 +88,16 @@ ssh -i "<pem路径>" root@39.98.118.81 systemctl restart blueberry-blog
 
 ## 域名
 
-- `bemly.top` — ICP 备案号 蜀ICP备2024056996号
-- Caddy 自动管理 Let's Encrypt 证书，到期自动续期
+- `bemly.top` — ICP 备案号 蜀ICP备2024056996号，Let's Encrypt 自动续期
+- `www.bemly.top` — 自签证书，301 跳转到 `bemly.top`
+- HSTS 已关闭
+- IP 直连被阻断，仅域名可访问
 
 ## 注意事项
 
 - 仓颉版本: 1.1.0
 - Spire 框架学习 ASP.NET Core 设计，使用 middleware pipeline
-- Spire 默认监听 `127.0.0.1:5000`，Caddy 反代 `:443 → localhost:5000`
+- Spire 监听 `127.0.0.1:996`，Caddy 反代 `:443 → :996`，`:80 → :443` 重定向
 - VPS 上永远不执行 cjpm/cjc 命令
 - 编译前确保 NAS 上 CANGJIE_HOME 和 CANGJIE_STDX_PATH 环境变量正确
 - cjpm 包名只允许驼峰格式（如 `spireBlog`），不能有连字符
