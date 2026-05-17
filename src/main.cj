@@ -105,12 +105,15 @@ func css(): String {
         .back-link:hover{opacity:.7}
         footer{text-align:center;padding:60px 20px 40px;color:#555;font-size:.8rem}
         footer .divider{width:40px;height:2px;background:rgba(255,255,255,0.1);margin:0 auto 20px;border-radius:1px}
+        .friends{display:flex;justify-content:center;gap:18px;margin-bottom:24px;flex-wrap:wrap}
+        .friends a{color:#888;text-decoration:none;transition:color .2s;font-size:.85rem}
+        .friends a:hover{color:#00ff88}
         @media(max-width:640px){header{padding:60px 0 40px}header h1{font-size:1.5rem}.post-card{padding:20px}}
     """
 }
 
 func layout(title: String, body: String): String {
-    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | Powered by Cangjie + Spire</p><p>&copy; 2026 Blueberry Jelly</p></footer></body></html>"
+    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + "<footer><div class=\"divider\"></div><div class=\"friends\"><a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a><a href=\"https://bemly.moe/\" target=\"_blank\">bemly.moe</a></div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | Powered by Cangjie + Spire</p><p>&copy; 2026 Blueberry Jelly</p></footer></body></html>"
 }
 
 func renderHome(): String {
