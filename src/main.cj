@@ -216,8 +216,10 @@ main(args: Array<String>): Int64 {
         var buf = Array<UInt8>(2048, repeat: 0)
         var len = context.request.body.read(buf)
         var rawBody = String.fromUtf8(buf.slice(0, len))
+        println("turnstile body len=" + len.toString() + " body=[" + rawBody + "]")
         var parts = rawBody.split("token=")
         var tokenStr = if (parts.size > 1) { parts[1] } else { "" }
+        println("turnstile tokenLen=" + tokenStr.size.toString())
         if (tokenStr == "") {
             context.response.statusCode = 400
             context.response.write("bad request")
