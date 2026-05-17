@@ -5,7 +5,12 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
+import std.env.*
+import stdx.net.http.*
+import stdx.encoding.json.*
 
+
+let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
 
 class Post {
     var slug: String
@@ -108,8 +113,53 @@ func css(): String {
         .friends{display:flex;justify-content:center;gap:18px;margin-bottom:24px;flex-wrap:wrap}
         .friends a{color:#888;text-decoration:none;transition:color .2s;font-size:.85rem}
         .friends a:hover{color:#00ff88}
+        .turnstile-wrap{display:flex;justify-content:center;align-items:center;min-height:100vh}
+        .turnstile-box{text-align:center;padding:40px}
+        .turnstile-box .logo{font-size:64px;margin-bottom:16px}
+        .turnstile-box p{color:#888;margin-bottom:24px;font-size:.95rem}
         @media(max-width:640px){header{padding:60px 0 40px}header h1{font-size:1.5rem}.post-card{padding:20px}}
     """
+}
+
+func turnstilePage(): String {
+    return """
+        <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>人机验证 | 一只蓝莓小果冻</title><style>""" + css() + """</style>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        </head><body>
+        <div class="turnstile-wrap"><div class="turnstile-box">
+        <div class="logo">&#x1FAD0;</div>
+        <p>请完成人机验证以继续访问</p>
+        <div class="cf-turnstile" data-sitekey=\"""" + SITE_KEY + """\" data-callback="onTurnstileDone"></div>
+        </div></div>
+        <script>
+        function onTurnstileDone(token) {
+            fetch('/verify-turnstile', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})})
+            .then(r => { if (r.ok) location.reload(); else alert('验证失败，请刷新重试'); });
+        }
+        </script>
+        </body></html>"""
+}
+
+func verifyTurnstileToken(token: String): Bool {
+    let secret = Env.get("TURNSTILE_SECRET") ?? ""
+    if (secret == "") {
+        return false
+    }
+    var client = ClientBuilder().build()
+    var body = "secret=" + secret + "&response=" + token
+    var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", body)
+    if (rsp.statusCode != 200) {
+        client.close()
+        return false
+    }
+    var buf = Array<UInt8>(1024, repeat: 0)
+    var len = rsp.body.read(buf)
+    client.close()
+    var json = String.fromUtf8(buf.slice(0, len))
+    var obj = Json.parse(json) ?? return false
+    var success = obj["success"] ?? false
+    return (success as Bool) ?? false
 }
 
 func footer(): String {
@@ -155,12 +205,42 @@ main(args: Array<String>): Int64 {
     host.useRouting()
 
     host.mapGet("/") { context =>
-        context.response.write(renderHome())
+        if (context.request.cookies.get("cj_token") != null) {
+            context.response.write(renderHome())
+        } else {
+            context.response.write(turnstilePage())
+        }
     }
 
     host.mapGet("/post/{slug}") { context =>
-        let slug = context.request.routeValues.get("slug") ?? ""
-        context.response.write(renderPost(slug))
+        if (context.request.cookies.get("cj_token") != null) {
+            let slug = context.request.routeValues.get("slug") ?? ""
+            context.response.write(renderPost(slug))
+        } else {
+            context.response.write(turnstilePage())
+        }
+    }
+
+    host.mapPost("/verify-turnstile") { context =>
+        var buf = Array<UInt8>(2048, repeat: 0)
+        var len = context.request.body.read(buf)
+        var bodyStr = String.fromUtf8(buf.slice(0, len))
+        var obj = Json.parse(bodyStr) ?? return
+        var token = obj["token"] ?? ""
+        var tokenStr = (token as String) ?? ""
+        if (verifyTurnstileToken(tokenStr)) {
+            var opts = CookieOptions()
+            opts.httpOnly = true
+            opts.secure = true
+            opts.sameSite = SameSite.Lax
+            opts.maxAge = 86400
+            context.response.cookies.append("cj_token", tokenStr, opts)
+            context.response.statusCode = 200
+            context.response.write("ok")
+        } else {
+            context.response.statusCode = 403
+            context.response.write("forbidden")
+        }
     }
 
     host.run("http://127.0.0.1:996")
