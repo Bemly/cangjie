@@ -145,11 +145,7 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/post/{slug}") { context =>
-        let slug = if (context.request.routeValues.containsKey("slug")) {
-            context.request.routeValues["slug"]
-        } else {
-            ""
-        }
+        let slug = context.request.routeValues["slug"]
         context.response.write(renderPost(slug))
     }
 
