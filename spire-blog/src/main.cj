@@ -1,4 +1,4 @@
-package web
+package spireBlog
 
 import soulsoft_web_http.*
 import soulsoft_web_routing.*
