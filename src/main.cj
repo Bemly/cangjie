@@ -5,7 +5,7 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
-import std.env.Env
+import std.process.CurrentProcess
 import std.time.*
 import stdx.net.http.*
 import stdx.encoding.json.*
@@ -137,7 +137,7 @@ func turnstilePage(): String {
 }
 
 func verifyTurnstileToken(token: String): Bool {
-    let secret = Env.get("TURNSTILE_SECRET") ?? ""
+    let secret = CurrentProcess.getEnv("TURNSTILE_SECRET") ?? ""
     if (secret == "") {
         return false
     }
