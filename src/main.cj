@@ -213,19 +213,30 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapPost("/verify-turnstile") { context =>
-        var buf = Array<UInt8>(2048, repeat: 0)
+        var buf = Array<UInt8>(4096, repeat: 0)
         var len = context.request.body.read(buf)
         var rawBody = String.fromUtf8(buf.slice(0, len))
-        println("turnstile body len=" + len.toString() + " body=[" + rawBody + "]")
         var parts = rawBody.split("token=")
         var tokenStr = if (parts.size > 1) { parts[1] } else { "" }
-        println("turnstile tokenLen=" + tokenStr.size.toString())
+        var dbg = "blen=" + len.toString() + " tlen=" + tokenStr.size.toString()
         if (tokenStr == "") {
-            context.response.statusCode = 400
-            context.response.write("bad request")
+            context.response.write("bad " + dbg)
             return
         }
-        if (verifyTurnstileToken(tokenStr, secret)) {
+        if (secret == "") {
+            context.response.write("no_secret " + dbg)
+            return
+        }
+        var client = ClientBuilder().build()
+        var bodyStr = "secret=" + secret + "&response=" + tokenStr
+        var bodyBytes = bodyStr.toArray()
+        var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", bodyBytes)
+        var rbuf = Array<UInt8>(1024, repeat: 0)
+        var rlen = rsp.body.read(rbuf)
+        client.close()
+        var respStr = String.fromUtf8(rbuf.slice(0, rlen))
+        dbg += " cf=" + respStr
+        if (respStr.contains("\"success\":true") || respStr.contains("\"success\": true")) {
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,
@@ -233,11 +244,9 @@ main(args: Array<String>): Int64 {
                 maxAge: Duration.day
             )
             context.response.cookies.append("cj_token", tokenStr, opts)
-            context.response.statusCode = 200
-            context.response.write("ok")
+            context.response.write("ok " + dbg)
         } else {
-            context.response.statusCode = 403
-            context.response.write("forbidden")
+            context.response.write("deny " + dbg)
         }
     }
 
