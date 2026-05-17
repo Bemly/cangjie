@@ -136,17 +136,19 @@ func turnstilePage(): String {
 
 func extractJsonString(json: String, key: String): String {
     var search = "\"" + key + "\":\""
-    var start = json.indexOf(search)
+    var startOpt = json.indexOf(search)
+    var start = startOpt ?? -1
     if (start < 0) {
         return ""
     }
     start = start + search.size
-    var remain = json.slice(start, json.size)
-    var end = remain.indexOf("\"")
+    var remain = json.substring(start)
+    var endOpt = remain.indexOf("\"")
+    var end = endOpt ?? -1
     if (end < 0) {
         return ""
     }
-    return remain.slice(0, end)
+    return remain.substring(0, end)
 }
 
 func verifyTurnstileToken(token: String, secret: String): Bool {
@@ -156,10 +158,6 @@ func verifyTurnstileToken(token: String, secret: String): Bool {
     var client = ClientBuilder().build()
     var body = "secret=" + secret + "&response=" + token
     var rsp = client.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", body)
-    if (rsp.statusCode != 200) {
-        client.close()
-        return false
-    }
     var buf = Array<UInt8>(1024, repeat: 0)
     var len = rsp.body.read(buf)
     client.close()
