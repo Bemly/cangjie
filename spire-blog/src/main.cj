@@ -13,17 +13,25 @@ class Post {
     var date: String
     var excerpt: String
     var content: String
+
+    init(slug: String, title: String, date: String, excerpt: String, content: String) {
+        this.slug = slug
+        this.title = title
+        this.date = date
+        this.excerpt = excerpt
+        this.content = content
+    }
 }
 
 let posts = ArrayList<Post>()
 
 func initPosts() {
     posts.add(Post(
-        slug = "arch-linux-400mb",
-        title = "ECS 400MB 内存安装 Arch Linux",
-        date = "2026-05-15",
-        excerpt = "在阿里云 400MB 内存 ECS 上从零安装 Arch Linux，踩坑 9 个，最终成功。",
-        content = """
+        "arch-linux-400mb",
+        "ECS 400MB 内存安装 Arch Linux",
+        "2026-05-15",
+        "在阿里云 400MB 内存 ECS 上从零安装 Arch Linux，踩坑 9 个，最终成功。",
+        """
             <p>近期将阿里云 ECS 从 Ubuntu 迁移到 Arch Linux，过程中遇到大量踩坑。本文记录了完整的安装过程和 9 个关键错误。</p>
             <h2>环境</h2>
             <ul>
@@ -43,11 +51,11 @@ func initPosts() {
         """
     ))
     posts.add(Post(
-        slug = "kernel-71-rc3-bbr",
-        title = "Kernel 7.1-rc3 + BBR on Arch",
-        date = "2026-05-14",
-        excerpt = "编译 Linux 7.1-rc3 内核，启用 BBR 拥塞控制算法，优化网络性能。",
-        content = """
+        "kernel-71-rc3-bbr",
+        "Kernel 7.1-rc3 + BBR on Arch",
+        "2026-05-14",
+        "编译 Linux 7.1-rc3 内核，启用 BBR 拥塞控制算法，优化网络性能。",
+        """
             <p>在 Arch Linux 上编译并部署了 Linux 7.1-rc3 内核，测试 BBR 拥塞控制算法。</p>
             <h2>编译配置</h2>
             <p>使用 Arch 的 ABS 系统自定义内核包，启用 BBR 相关配置选项。</p>
@@ -56,11 +64,11 @@ func initPosts() {
         """
     ))
     posts.add(Post(
-        slug = "cloud-server-journey",
-        title = "Cloud Server Journey",
-        date = "2026-05-13",
-        excerpt = "开始云服务器之旅，记录从选购到部署的全过程。",
-        content = """
+        "cloud-server-journey",
+        "Cloud Server Journey",
+        "2026-05-13",
+        "开始云服务器之旅，记录从选购到部署的全过程。",
+        """
             <p>开始使用阿里云 ECS 作为个人服务器，记录从选购、配置到部署第一个应用的全过程。</p>
             <h2>配置选择</h2>
             <p>选择 400MB 内存、20GB SSD 的轻量配置，对于个人博客和实验项目足够。</p>
@@ -137,7 +145,11 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/post/{slug}") { context =>
-        let slug = context.request.routeValues["slug"] ?? ""
+        let slug = if (context.request.routeValues.containsKey("slug")) {
+            context.request.routeValues["slug"]
+        } else {
+            ""
+        }
         context.response.write(renderPost(slug))
     }
 
