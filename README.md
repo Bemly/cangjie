@@ -9,8 +9,8 @@
 -------------
 
 - **语言**: [仓颉](https://cangjie-lang.cn) 1.1.0
-- **框架**: [Spire 天擎](https://gitcode.com/soulsoft/spire-doc) — ASP.NET Core 风格 middleware pipeline
-- **Web 服务器**: Caddy (自动 Let's Encrypt TLS)
+- **框架**: [Spire 天擎](https://docs.cangjie-spire.com) — ASP.NET Core 风格 middleware pipeline
+- **Web 服务器**: Caddy (Let's Encrypt TLS, www 自签证书)
 - **部署**: 阿里云 ECS Arch Linux, 400MB RAM
 
 项目结构
@@ -20,6 +20,7 @@
 ├── cjpm.toml          # 仓颉包配置
 ├── src/
 │   └── main.cj        # 博客源码
+├── LICENSE            # MulanPubL-2.0
 └── CLAUDE.md          # Claude Code 工作指引
 ```
 
@@ -41,17 +42,21 @@ cjpm build
 
 ```bash
 ./target/release/bin/main
-# 默认监听 http://127.0.0.1:996
+# 监听 http://127.0.0.1:996
 ```
 
 部署
 -------------
-完整部署流程见 [CLAUDE.md](CLAUDE.md)，简要步骤：
 
 1. 本机修改代码 → push GitHub
 2. NAS pull → 编译
 3. scp 二进制到 VPS → 重启 systemd 服务
 
+详见 [CLAUDE.md](CLAUDE.md)
+
 许可
 -------------
-[MulanPubL-2.0](LICENSE)
+
+Copyright (c) 2024-2026 Bemly_
+
+[MulanPubL-2.0](https://license.coscl.org.cn/MulanPubL-2.0)（木兰公共许可证 第2版）

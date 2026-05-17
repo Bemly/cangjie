@@ -1,6 +1,6 @@
 [package]
 cjc-version = "1.1.0"
-name = "spireBlog"
+name = "bemlyCJWeb"
 description = "一只蓝莓小果冻 - Bemly_"
 version = "26.5.18"
 target-dir = ""

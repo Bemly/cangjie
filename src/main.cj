@@ -1,4 +1,4 @@
-package spireBlog
+package bemlyCJWeb
 
 import soulsoft_web_http.*
 import soulsoft_web_routing.*
