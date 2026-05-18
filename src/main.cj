@@ -264,6 +264,7 @@ main(args: Array<String>): Int64 {
         }
         var rlErr = checkRateLimit(context.request.remoteAddr, now)
         if (rlErr != "") {
+            log.warn("turnstile rate limited: " + context.request.remoteAddr, [])
             context.response.statusCode = 429
             context.response.write(rlErr)
             return
