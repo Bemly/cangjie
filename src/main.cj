@@ -10,7 +10,7 @@ import stdx.net.http.*
 import stdx.net.tls.*
 
 
-let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
+var SITE_KEY = ""
 let validTokens = HashSet<String>()
 let rateLimit = HashMap<String, DateTime>()
 var blockUntil = DateTime.UnixEpoch
@@ -213,6 +213,7 @@ main(args: Array<String>): Int64 {
     initPosts()
 
     let secret = if (args.size > 0) { args[0] } else { "" }
+    SITE_KEY = if (args.size > 1) { args[1] } else { "" }
 
     let builder = WebHost.createBuilder(args)
     builder.services.addRouting()
