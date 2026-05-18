@@ -221,7 +221,11 @@ func renderPost(slug: String): String {
 func parseIntEnv(key: String, default: Int64): Int64 {
     var val = getVariable(key) ?? ""
     if (val == "") { return default }
-    return Int64.parse(val) ?? default
+    try {
+        return Int64.parse(val)
+    } catch (e: Exception) {
+        return default
+    }
 }
 
 main(args: Array<String>): Int64 {
