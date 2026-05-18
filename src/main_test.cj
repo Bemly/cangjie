@@ -71,7 +71,7 @@ func checkCircuitBreakerBlockedTest() {
 @Test
 func checkCircuitBreakerHitsLimitTest() {
     validTokens.clear()
-    for (i in 0..19) {
+    for (i in 0..20) {
         validTokens.add("token" + i.toString())
     }
     blockUntil = DateTime.UnixEpoch
