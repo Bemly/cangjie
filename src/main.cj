@@ -5,6 +5,7 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
+import std.env.*
 import std.time.*
 import stdx.net.http.*
 import stdx.net.tls.*
@@ -212,8 +213,8 @@ func renderPost(slug: String): String {
 main(args: Array<String>): Int64 {
     initPosts()
 
-    let secret = if (args.size > 0) { args[0] } else { "" }
-    SITE_KEY = if (args.size > 1) { args[1] } else { "" }
+    let secret = getVariable("TURNSTILE_SECRET") ?? ""
+    SITE_KEY = getVariable("TURNSTILE_SITE_KEY") ?? ""
 
     let builder = WebHost.createBuilder(args)
     builder.services.addRouting()
