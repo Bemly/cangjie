@@ -1,6 +1,6 @@
 bemly.top {
     reverse_proxy localhost:996
-    encode gzip
+    encode zstd gzip
     header / {
         X-Content-Type-Options "nosniff"
         X-Frame-Options "DENY"
