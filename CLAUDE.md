@@ -132,6 +132,24 @@ ssh -i "<pem路径>" root@39.98.118.81 systemctl restart bemlyCJWeb
 - HSTS 已关闭
 - IP 直连被阻断，仅域名可访问
 
+## 所需环境变量
+
+程序运行时需要以下环境变量（systemd `Environment=` 注入，**不写入代码或 git**）：
+
+| 变量名 | 说明 | 注入方式 |
+|--------|------|----------|
+| `TURNSTILE_SECRET` | Cloudflare Turnstile 密钥 | systemd `Environment=` |
+| `TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key | systemd `Environment=` |
+| `CANGJIE_HOME` | 仓颉 SDK 路径 | systemd `Environment=` |
+| `CANGJIE_STDX_PATH` | STDX 路径 | systemd `Environment=` |
+| `LD_LIBRARY_PATH` | 仓颉运行时 .so 路径 | systemd `Environment=` |
+
+systemd 配置示例（不含真实值）：
+```
+Environment=TURNSTILE_SECRET=<your-secret>
+Environment=TURNSTILE_SITE_KEY=<your-site-key>
+```
+
 ## 注意事项
 
 - 仓颉版本: 1.1.0

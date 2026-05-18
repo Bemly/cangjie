@@ -36,6 +36,10 @@ cjpm build
 
 Output: `target/release/bin/main`
 
+Required environment variables at runtime (not committed):
+- `TURNSTILE_SECRET` — Cloudflare Turnstile secret key
+- `TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key
+
 ## Test
 
 ```bash

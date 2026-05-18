@@ -40,6 +40,10 @@ cjpm build
 
 编译产物: `target/release/bin/main`
 
+运行时需要以下环境变量（不写入代码）：
+- `TURNSTILE_SECRET` — Cloudflare Turnstile 密钥
+- `TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key
+
 测试
 -------------
 
