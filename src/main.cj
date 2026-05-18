@@ -124,6 +124,43 @@ func css(): String {
     """
 }
 
+func extractToken(body: String): String {
+    var parts = body.split("token=")
+    return if (parts.size > 1) { parts[1] } else { "" }
+}
+
+func checkCircuitBreaker(now: DateTime): String {
+    if ((now - blockUntil).toSeconds() < 0) {
+        var remain = (blockUntil - now).toSeconds() / 60
+        return "blocked for " + remain.toString() + " min"
+    }
+    if (validTokens.size >= 20) {
+        validTokens.clear()
+        blockUntil = now + Duration.minute * 20
+        return "blocked for 20 min"
+    }
+    return ""
+}
+
+func checkRateLimit(remoteIp: String, now: DateTime): String {
+    if (rateLimit.contains(remoteIp)) {
+        var lastTime = rateLimit.get(remoteIp) ?? now
+        if ((now - lastTime).toSeconds() < 30) {
+            return "too many requests"
+        }
+    }
+    rateLimit.add(remoteIp, now)
+    return ""
+}
+
+func isTokenValid(cookieVal: String): Bool {
+    return cookieVal != "" && validTokens.contains(cookieVal)
+}
+
+func isCloudflareSuccess(respStr: String): Bool {
+    return respStr.contains("\"success\":true") || respStr.contains("\"success\": true")
+}
+
 func turnstilePage(): String {
     var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
     p += "<title>人机验证 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
@@ -184,7 +221,7 @@ main(args: Array<String>): Int64 {
 
     host.mapGet("/") { context =>
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
-        if (cookieVal != "" && validTokens.contains(cookieVal)) {
+        if (isTokenValid(cookieVal)) {
             context.response.write(renderHome())
         } else {
             context.response.write(turnstilePage())
@@ -193,7 +230,7 @@ main(args: Array<String>): Int64 {
 
     host.mapGet("/post/{slug}") { context =>
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
-        if (cookieVal != "" && validTokens.contains(cookieVal)) {
+        if (isTokenValid(cookieVal)) {
             let slug = context.request.routeValues.get("slug") ?? ""
             context.response.write(renderPost(slug))
         } else {
@@ -205,37 +242,25 @@ main(args: Array<String>): Int64 {
         var buf = Array<UInt8>(4096, repeat: 0)
         var len = context.request.body.read(buf)
         var rawBody = String.fromUtf8(buf.slice(0, len))
-        var parts = rawBody.split("token=")
-        var tokenStr = if (parts.size > 1) { parts[1] } else { "" }
+        var tokenStr = extractToken(rawBody)
         if (tokenStr == "" || secret == "") {
             context.response.statusCode = 400
             context.response.write("bad request")
             return
         }
         var now = DateTime.nowUTC()
-        if ((now - blockUntil).toSeconds() < 0) {
-            var remain = (blockUntil - now).toSeconds() / 60
+        var cbErr = checkCircuitBreaker(now)
+        if (cbErr != "") {
             context.response.statusCode = 429
-            context.response.write("blocked for " + remain.toString() + " min")
+            context.response.write(cbErr)
             return
         }
-        if (validTokens.size >= 20) {
-            validTokens.clear()
-            blockUntil = now + Duration.minute * 20
+        var rlErr = checkRateLimit(context.request.remoteAddr, now)
+        if (rlErr != "") {
             context.response.statusCode = 429
-            context.response.write("blocked for 20 min")
+            context.response.write(rlErr)
             return
         }
-        var remoteIp = context.request.remoteAddr
-        if (rateLimit.contains(remoteIp)) {
-            var lastTime = rateLimit.get(remoteIp) ?? now
-            if ((now - lastTime).toSeconds() < 30) {
-                context.response.statusCode = 429
-                context.response.write("too many requests")
-                return
-            }
-        }
-        rateLimit.add(remoteIp, now)
         var tlsConfig = TlsClientConfig()
         var client = ClientBuilder().tlsConfig(tlsConfig).build()
         var bodyStr = "secret=" + secret + "&response=" + tokenStr
@@ -250,7 +275,7 @@ main(args: Array<String>): Int64 {
         var rlen = rsp.body.read(rbuf)
         client.close()
         var respStr = String.fromUtf8(rbuf.slice(0, rlen))
-        if (respStr.contains("\"success\":true") || respStr.contains("\"success\": true")) {
+        if (isCloudflareSuccess(respStr)) {
             validTokens.add(tokenStr)
             var opts = CookieOptions(
                 httpOnly: true,
