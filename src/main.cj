@@ -13,6 +13,7 @@ import stdx.net.tls.*
 let SITE_KEY = "0x4AAAAAADROLUhcdUv0Yol5"
 let validTokens = HashSet<String>()
 let rateLimit = HashMap<String, DateTime>()
+var blockUntil = DateTime.UnixEpoch
 
 class Post {
     var slug: String
@@ -211,8 +212,21 @@ main(args: Array<String>): Int64 {
             context.response.write("bad request")
             return
         }
-        var remoteIp = context.request.remoteAddr
         var now = DateTime.nowUTC()
+        if ((now - blockUntil).toSeconds() < 0) {
+            var remain = (blockUntil - now).toSeconds() / 60
+            context.response.statusCode = 429
+            context.response.write("blocked for " + remain.toString() + " min")
+            return
+        }
+        if (validTokens.size >= 20) {
+            validTokens.clear()
+            blockUntil = now + Duration.minute * 20
+            context.response.statusCode = 429
+            context.response.write("blocked for 20 min")
+            return
+        }
+        var remoteIp = context.request.remoteAddr
         if (rateLimit.contains(remoteIp)) {
             var lastTime = rateLimit.get(remoteIp) ?? now
             if ((now - lastTime).toSeconds() < 30) {
@@ -222,9 +236,6 @@ main(args: Array<String>): Int64 {
             }
         }
         rateLimit.add(remoteIp, now)
-        if (validTokens.size >= 20) {
-            validTokens.clear()
-        }
         var tlsConfig = TlsClientConfig()
         var client = ClientBuilder().tlsConfig(tlsConfig).build()
         var bodyStr = "secret=" + secret + "&response=" + tokenStr
