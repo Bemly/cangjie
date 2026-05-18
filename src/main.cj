@@ -244,7 +244,7 @@ main(args: Array<String>): Int64 {
     host.useRouting()
 
     host.mapGet("/") { context =>
-        context.response.headers.cacheControl = "no-store"
+        context.response.headers.cacheControl = ["no-store"]
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
         if (!turnstileEnabled || isTokenValid(cookieVal)) {
             context.response.write(renderHome())
@@ -254,7 +254,7 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/post/{slug}") { context =>
-        context.response.headers.cacheControl = "no-store"
+        context.response.headers.cacheControl = ["no-store"]
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
         if (!turnstileEnabled || isTokenValid(cookieVal)) {
             let slug = context.request.routeValues.get("slug") ?? ""
