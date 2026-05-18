@@ -87,6 +87,24 @@ VPS 上运行博客需要以下文件：
 - STDX 静态库 (`libstdx.*.a`, `libcangjie-dynamicLoader-opensslFFI.a` 等)
 - Soulsoft Spire 模块 (`soulsoft_web_*`)
 
+## 测试
+
+```bash
+# NAS 上运行测试（测试通过后才构建部署）
+cd /vol1/1000/仓颉网站开发/cangjie
+git pull
+source /vol1/1000/仓颉网站开发/sdk/cangjie/envsetup.sh
+export CANGJIE_STDX_PATH=/vol1/1000/仓颉网站开发/sdk/cangjie-stdx-linux-x64-1.1.0.1/linux_x86_64_cjnative/static/stdx
+cjpm update
+cjpm test   # 先跑测试
+cjpm build  # 测试通过再构建
+```
+
+测试格式：
+- 测试文件 `src/main_test.cj`，同 package `bemlyCJWeb`
+- `@Test` 宏标记测试函数，`@Expect(actual, expected)` 断言
+- 参考文档：NAS `/vol1/1000/仓颉网站开发/cangjie-corpus/libs/std/unittest/`
+
 ## 部署流程
 
 ```bash

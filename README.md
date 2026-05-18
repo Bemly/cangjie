@@ -40,6 +40,21 @@ cjpm build
 
 编译产物: `target/release/bin/main`
 
+测试
+-------------
+
+```bash
+cjpm test
+```
+
+测试文件命名 `*_test.cj`，放在 `src/` 下，与源码同 package。使用 `@Test` 宏标记测试函数，`@Expect(actual, expected)` 断言。
+
+```
+src/
+├── main.cj           # 源码
+└── main_test.cj      # 测试
+```
+
 运行
 -------------
 

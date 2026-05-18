@@ -36,6 +36,20 @@ cjpm build
 
 Output: `target/release/bin/main`
 
+## Test
+
+```bash
+cjpm test
+```
+
+Test files are named `*_test.cj` in `src/`, same package as source. Use `@Test` macro for test functions and `@Expect(actual, expected)` for assertions.
+
+```
+src/
+├── main.cj           # Source
+└── main_test.cj      # Tests
+```
+
 ## Run
 
 ```bash
