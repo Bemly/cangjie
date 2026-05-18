@@ -132,3 +132,35 @@ func checkRateLimitDifferentIpTest() {
     @Expect(result, "")
     rateLimit.clear()
 }
+
+@Test
+func parseIntEnvDefaultTest() {
+    var result = parseIntEnv("BEMLY_NONEXIST", 42)
+    @Expect(result, 42)
+}
+
+@Test
+func checkCircuitBreakerConfigurableLimitTest() {
+    var saved = maxTokens
+    maxTokens = 5
+    validTokens.clear()
+    for (i in 0..5) {
+        validTokens.add("tok" + i.toString())
+    }
+    blockUntil = DateTime.UnixEpoch
+    var result = checkCircuitBreaker(DateTime.nowUTC())
+    @Expect(result, "blocked for " + blockMinutes.toString() + " min")
+    @Expect(validTokens.size, 0)
+    blockUntil = DateTime.UnixEpoch
+    maxTokens = saved
+}
+
+@Test
+func turnstileDisabledSkipsChallengeTest() {
+    var saved = turnstileEnabled
+    turnstileEnabled = false
+    validTokens.clear()
+    var shouldSkip = !turnstileEnabled || isTokenValid("any")
+    @Expect(shouldSkip, true)
+    turnstileEnabled = saved
+}

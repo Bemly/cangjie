@@ -5,6 +5,7 @@ import soulsoft_web_routing.*
 import soulsoft_web_hosting.*
 import soulsoft_extensions_injection.*
 import std.collection.*
+import std.convert.*
 import std.env.*
 import std.time.*
 import stdx.log.*
@@ -14,6 +15,10 @@ import stdx.net.tls.*
 
 
 var SITE_KEY = ""
+var turnstileEnabled = true
+var maxTokens: Int64 = 20
+var blockMinutes: Int64 = 20
+var rateLimitSec: Int64 = 30
 let log = SimpleLogger(getStdOut())
 let validTokens = HashSet<String>()
 let rateLimit = HashMap<String, DateTime>()
@@ -138,10 +143,10 @@ func checkCircuitBreaker(now: DateTime): String {
         var remain = (blockUntil - now).toSeconds() / 60
         return "blocked for " + remain.toString() + " min"
     }
-    if (validTokens.size >= 20) {
+    if (validTokens.size >= maxTokens) {
         validTokens.clear()
-        blockUntil = now + Duration.minute * 20
-        return "blocked for 20 min"
+        blockUntil = now + Duration.minute * blockMinutes
+        return "blocked for " + blockMinutes.toString() + " min"
     }
     return ""
 }
@@ -149,7 +154,7 @@ func checkCircuitBreaker(now: DateTime): String {
 func checkRateLimit(remoteIp: String, now: DateTime): String {
     if (rateLimit.contains(remoteIp)) {
         var lastTime = rateLimit.get(remoteIp) ?? now
-        if ((now - lastTime).toSeconds() < 30) {
+        if ((now - lastTime).toSeconds() < rateLimitSec) {
             return "too many requests"
         }
     }
@@ -213,11 +218,21 @@ func renderPost(slug: String): String {
     return layout("未找到", "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>404</h1><p>文章不存在</p></article>")
 }
 
+func parseIntEnv(key: String, default: Int64): Int64 {
+    var val = getVariable(key) ?? ""
+    if (val == "") { return default }
+    return Int64.parse(val) ?? default
+}
+
 main(args: Array<String>): Int64 {
     initPosts()
 
     let secret = getVariable("TURNSTILE_SECRET") ?? ""
     SITE_KEY = getVariable("TURNSTILE_SITE_KEY") ?? ""
+    turnstileEnabled = (getVariable("TURNSTILE_ENABLE") ?? "true") != "false"
+    maxTokens = parseIntEnv("TURNSTILE_MAX_TOKENS", 20)
+    blockMinutes = parseIntEnv("TURNSTILE_BLOCK_MINUTES", 20)
+    rateLimitSec = parseIntEnv("TURNSTILE_RATE_LIMIT_SEC", 30)
 
     let builder = WebHost.createBuilder(args)
     builder.services.addRouting()
@@ -226,7 +241,7 @@ main(args: Array<String>): Int64 {
 
     host.mapGet("/") { context =>
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
-        if (isTokenValid(cookieVal)) {
+        if (!turnstileEnabled || isTokenValid(cookieVal)) {
             context.response.write(renderHome())
         } else {
             context.response.write(turnstilePage())
@@ -235,7 +250,7 @@ main(args: Array<String>): Int64 {
 
     host.mapGet("/post/{slug}") { context =>
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
-        if (isTokenValid(cookieVal)) {
+        if (!turnstileEnabled || isTokenValid(cookieVal)) {
             let slug = context.request.routeValues.get("slug") ?? ""
             context.response.write(renderPost(slug))
         } else {
