@@ -1,8 +1,34 @@
 package bemlyCJWeb
 
 import std.unittest.testmacro.*
+import std.env.*
 import std.time.*
 
+
+@Test
+func getVariableNotSetTest() {
+    var result = getVariable("BEMLY_TEST_NONEXISTENT_VAR")
+    @Expect(result == None, true)
+}
+
+@Test
+func siteKeyDefaultEmptyTest() {
+    var saved = SITE_KEY
+    SITE_KEY = ""
+    @Expect(SITE_KEY, "")
+    SITE_KEY = saved
+}
+
+@Test
+func turnstilePageContainsWidgetTest() {
+    var saved = SITE_KEY
+    SITE_KEY = "test_site_key"
+    var page = turnstilePage()
+    @Expect(page.contains("cf-turnstile"), true)
+    @Expect(page.contains("test_site_key"), true)
+    @Expect(page.contains("onTurnstileDone"), true)
+    SITE_KEY = saved
+}
 
 @Test
 func extractTokenTest() {

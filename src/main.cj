@@ -7,11 +7,14 @@ import soulsoft_extensions_injection.*
 import std.collection.*
 import std.env.*
 import std.time.*
+import stdx.log.*
+import stdx.logger.*
 import stdx.net.http.*
 import stdx.net.tls.*
 
 
 var SITE_KEY = ""
+let log = SimpleLogger(getStdOut())
 let validTokens = HashSet<String>()
 let rateLimit = HashMap<String, DateTime>()
 var blockUntil = DateTime.UnixEpoch
@@ -250,9 +253,11 @@ main(args: Array<String>): Int64 {
             context.response.write("bad request")
             return
         }
+        log.info("turnstile verify from " + context.request.remoteAddr, [])
         var now = DateTime.nowUTC()
         var cbErr = checkCircuitBreaker(now)
         if (cbErr != "") {
+            log.warn("turnstile blocked: " + cbErr, [])
             context.response.statusCode = 429
             context.response.write(cbErr)
             return
@@ -279,6 +284,7 @@ main(args: Array<String>): Int64 {
         var respStr = String.fromUtf8(rbuf.slice(0, rlen))
         if (isCloudflareSuccess(respStr)) {
             validTokens.add(tokenStr)
+            log.info("turnstile verify success", [])
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,
@@ -288,6 +294,7 @@ main(args: Array<String>): Int64 {
             context.response.cookies.append("cj_token", tokenStr, opts)
             context.response.write("ok")
         } else {
+            log.warn("turnstile verify failed: " + respStr, [])
             context.response.statusCode = 403
             context.response.write("forbidden")
         }
