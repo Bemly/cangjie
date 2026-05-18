@@ -140,6 +140,10 @@ ssh -i "<pem路径>" root@39.98.118.81 systemctl restart bemlyCJWeb
 |--------|------|----------|
 | `TURNSTILE_SECRET` | Cloudflare Turnstile 密钥 | systemd `Environment=` |
 | `TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key | systemd `Environment=` |
+| `TURNSTILE_ENABLE` | 是否启用质询，`false` 则跳过（默认 `true`） | systemd `Environment=` |
+| `TURNSTILE_MAX_TOKENS` | 熔断阈值，累计多少个 token 后封禁（默认 `20`） | systemd `Environment=` |
+| `TURNSTILE_BLOCK_MINUTES` | 熔断封禁时长，分钟（默认 `20`） | systemd `Environment=` |
+| `TURNSTILE_RATE_LIMIT_SEC` | 单 IP 验证间隔，秒（默认 `30`） | systemd `Environment=` |
 | `CANGJIE_HOME` | 仓颉 SDK 路径 | systemd `Environment=` |
 | `CANGJIE_STDX_PATH` | STDX 路径 | systemd `Environment=` |
 | `LD_LIBRARY_PATH` | 仓颉运行时 .so 路径 | systemd `Environment=` |
