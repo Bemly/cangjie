@@ -11,3 +11,6 @@ Thumbs.db
 
 # Cangjie
 *.cjo
+
+# Claude Code
+.claude/
