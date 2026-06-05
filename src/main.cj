@@ -48,6 +48,8 @@ func initPosts() {
     posts.add(getCloudServerJourneyPost())
     posts.add(getJavaverseChatPost())
     posts.add(getAzureOpenaiPost())
+    posts.add(getFnnasBypassPost())
+    posts.add(getThirdPartyCookiePost())
 }
 
 func css(): String {
