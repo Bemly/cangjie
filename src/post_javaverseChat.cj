@@ -27,7 +27,6 @@ func getJavaverseChatPost(): Post {
 
             <h2>项目快照</h2>
             <h3>1. 主页面</h3>
-            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Main_Frame_Bot_GUI.avif" alt="Bot界面" style="max-width:100%">
             <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Main_Frame_Chat_GUI.avif" alt="聊天界面" style="max-width:100%">
 
             <h3>2. 后台输出</h3>
