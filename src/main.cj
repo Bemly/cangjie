@@ -47,6 +47,7 @@ func initPosts() {
     posts.add(getKernel71rc3bbrPost())
     posts.add(getCloudServerJourneyPost())
     posts.add(getJavaverseChatPost())
+    posts.add(getAzureOpenaiPost())
 }
 
 func css(): String {
