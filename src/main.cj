@@ -46,6 +46,7 @@ func initPosts() {
     posts.add(getArchLinux400mbPost())
     posts.add(getKernel71rc3bbrPost())
     posts.add(getCloudServerJourneyPost())
+    posts.add(getJavaverseChatPost())
 }
 
 func css(): String {
