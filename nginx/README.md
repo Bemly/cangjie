@@ -10,7 +10,7 @@
 ### 1. 创建图片目录
 
 ```bash
-mkdir -p /path/to/cangjie-images/{arch-linux-400mb,kernel-71-rc3-bbr,cloud-server-journey}
+mkdir -p /vol1/1000/仓颉网站开发/cangjie-images/{arch-linux-400mb,kernel-71-rc3-bbr,cloud-server-journey}
 ```
 
 ### 2. 添加频率限制配置
@@ -30,12 +30,12 @@ nginx -s reload
 ## 访问方式
 
 ```
-https://your-domain/cangjie/{文章名}/{序号}.{ext}
+https://bemly-moe.5ddd.com/cangjie/{文章名}/{序号}.{ext}
 ```
 
 例如：
-- `https://your-domain/cangjie/arch-linux-400mb/1.avif`
-- `https://your-domain/cangjie/kernel-71-rc3-bbr/2.png`
+- `https://bemly-moe.5ddd.com/cangjie/arch-linux-400mb/1.avif`
+- `https://bemly-moe.5ddd.com/cangjie/kernel-71-rc3-bbr/2.png`
 
 ## 频率限制
 
