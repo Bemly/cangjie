@@ -151,7 +151,7 @@ func footer(): String {
 }
 
 func layout(title: String, body: String): String {
-    var js = "<script>document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('img[data-src]').forEach(function(img){fetch(img.dataset.src,{credentials:'include'}).then(function(r){return r.blob()}).then(function(b){img.src=URL.createObjectURL(b)}).catch(function(){img.src=img.dataset.src})})})</script>"
+    var js = "<script>document.addEventListener('DOMContentLoaded',function(){document.cookie='mode=relay;path=/;samesite=none;secure';document.querySelectorAll('img[data-src]').forEach(function(img){fetch(img.dataset.src,{credentials:'include'}).then(function(r){return r.blob()}).then(function(b){img.src=URL.createObjectURL(b)}).catch(function(){img.src=img.dataset.src})})})</script>"
     return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + footer() + js + "</body></html>"
 }
 
