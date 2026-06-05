@@ -12,8 +12,8 @@ func getJavaverseChatPost(): Post {
             <h2>开发环境</h2>
             <p>先叠甲，这个是随便做的，其次做的时候是用的校园环境，所以说每个过程都非常繁杂且古早。</p>
             <p>数据库采用更加古早的版本，JDBC用的mysql-connector-5.1.13桥梁，MySQL用的远古5.1.47社区版，Navicat for MySQL也不知道是从哪个包浆软件提供商搞来的。环境是JavaSE 1.8，新版jar包基本上都能兼容可还行，目前java8的地位还是可以的。IDE也是超级古老的Eclipse Luna和Microsoft Visual Studio 2010。</p>
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/sql_version_low.avif" alt="MySQL版本" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/eclipse_version_low.avif" alt="Eclipse版本" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/sql_version_low.avif" alt="MySQL版本" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/eclipse_version_low.avif" alt="Eclipse版本" style="max-width:100%">
 
             <p>主题用的JTatto，目前写了websocket方式、TCP自创上层协议方式收发数据，载体也分了直接使用字节流读取前字节来区分数据信息和直接采用JSON序列/反序列化发送消息的方式。<strong>代码全部使用GBK编码编写，注意查看的时候要以GBK为编码</strong></p>
 
@@ -27,22 +27,22 @@ func getJavaverseChatPost(): Post {
 
             <h2>项目快照</h2>
             <h3>1. 主页面</h3>
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Main_Frame_Bot_GUI.avif" alt="Bot界面" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Main_Frame_Chat_GUI.avif" alt="聊天界面" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Main_Frame_Bot_GUI.avif" alt="Bot界面" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Main_Frame_Chat_GUI.avif" alt="聊天界面" style="max-width:100%">
 
             <h3>2. 后台输出</h3>
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Background_output.avif" alt="后台输出1" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Background_output2.avif" alt="后台输出2" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Background_output.avif" alt="后台输出1" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/Background_output2.avif" alt="后台输出2" style="max-width:100%">
 
             <h3>3. 数据库</h3>
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/db1.avif" alt="数据库展示" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/db1.avif" alt="数据库展示" style="max-width:100%">
 
             <h3>4. 设计图</h3>
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/db2.avif" alt="设计图1" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/db3.avif" alt="设计图2" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/image-20230701010311479.avif" alt="设计图3" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/clip_image002.avif" alt="设计图4" style="max-width:100%">
-            <img src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/image-20230701010523553.avif" alt="设计图5" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/db2.avif" alt="设计图1" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/db3.avif" alt="设计图2" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/image-20230701010311479.avif" alt="设计图3" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/clip_image002.avif" alt="设计图4" style="max-width:100%">
+            <img data-src="https://bemly-moe.5ddd.com/cangjie/javaverse-chat/image-20230701010523553.avif" alt="设计图5" style="max-width:100%">
 
             <h2>踩坑记录</h2>
             <h3>1. GBK编码问题</h3>
