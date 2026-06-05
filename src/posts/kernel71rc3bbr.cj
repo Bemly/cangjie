@@ -1,6 +1,4 @@
-package bemlyCJWeb.posts
-
-import bemlyCJWeb.*
+package bemlyCJWeb
 
 public func getPost(): Post {
     return Post(
