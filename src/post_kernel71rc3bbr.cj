@@ -1,6 +1,6 @@
 package bemlyCJWeb
 
-public func getPost(): Post {
+func getKernel71rc3bbrPost(): Post {
     return Post(
         "kernel-71-rc3-bbr",
         "Kernel 7.1-rc3 + BBR on Arch",

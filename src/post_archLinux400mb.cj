@@ -1,6 +1,6 @@
 package bemlyCJWeb
 
-public func getPost(): Post {
+func getArchLinux400mbPost(): Post {
     return Post(
         "arch-linux-400mb",
         "ECS 400MB 内存安装 Arch Linux",

@@ -43,9 +43,9 @@ class Post {
 let posts = ArrayList<Post>()
 
 func initPosts() {
-    posts.add(archLinux400mb.getPost())
-    posts.add(kernel71rc3bbr.getPost())
-    posts.add(cloudServerJourney.getPost())
+    posts.add(getArchLinux400mbPost())
+    posts.add(getKernel71rc3bbrPost())
+    posts.add(getCloudServerJourneyPost())
 }
 
 func css(): String {

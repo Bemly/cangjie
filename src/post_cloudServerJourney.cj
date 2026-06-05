@@ -1,6 +1,6 @@
 package bemlyCJWeb
 
-public func getPost(): Post {
+func getCloudServerJourneyPost(): Post {
     return Post(
         "cloud-server-journey",
         "Cloud Server Journey",
