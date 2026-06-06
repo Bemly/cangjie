@@ -317,7 +317,7 @@ main(args: Array<String>): Int64 {
         context.response.headers.add("Content-Type", "application/zip")
         context.response.headers.add("Content-Disposition", "attachment; filename=\"chrome-extension.zip\"")
         try {
-            var file = File("chrome-extension.zip")
+            var file = File("chrome-extension.zip", OpenMode.Read)
             var bytes = file.readBytes()
             context.response.write(bytes)
         } catch (e: Exception) {
