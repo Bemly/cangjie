@@ -21,8 +21,9 @@ A personal blog built with 100% Cangjie language + Spire framework.
 ├── src/
 │   ├── main.cj            # Blog source code
 │   ├── main_test.cj       # Tests
-│   ├── post_*.cj          # Blog posts (one file per post)
-│   └── post_fnnasBypass.cj
+│   └── post_*.cj          # Blog posts (one file per post)
+├── lib/
+│   └── html-builder/      # HTML Builder DSL library
 ├── nginx/
 │   ├── cangjie-imagebed.conf  # Image bed nginx config
 │   ├── nginx-limit.conf      # Rate limiting config
@@ -32,6 +33,31 @@ A personal blog built with 100% Cangjie language + Spire framework.
 ├── LICENSE                # MulanPubL-2.0
 └── CLAUDE.md              # Claude Code guide
 ```
+
+## HTML Builder DSL
+
+Built-in HTML Builder DSL library for declarative HTML generation:
+
+```cangjie
+import html_builder.*
+
+let page = html {
+    head {
+        title("My Blog")
+    }
+    body {
+        div(HashMap<String, String>().add("class", "container")) {
+            h1("Title")
+            p("Content")
+            a("https://example.com", "Link")
+        }
+    }
+}
+```
+
+Supported tags: `html`, `head`, `body`, `div`, `span`, `h1`-`h4`, `p`, `title`, `a`, `img`, `ul`, `li`, `br`, `hr`, `code`, `pre`, `style`, `script`, `meta`, `link`
+
+Special: `raw(html)` for raw HTML, `text(content)` for escaped text
 
 ## Image Bed
 

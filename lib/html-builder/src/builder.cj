@@ -222,3 +222,57 @@ public func link(attrs: Map<String, String>): Unit {
     let builder = HtmlBuilder()
     builder.selfClosing("link", attrs)
 }
+
+public func header(attrs: Map<String, String>, children: () -> Unit): Unit {
+    let builder = HtmlBuilder()
+    builder.tag("header", attrs, children)
+}
+
+public func header(children: () -> Unit): Unit {
+    header(HashMap<String, String>(), children)
+}
+
+public func article(attrs: Map<String, String>, children: () -> Unit): Unit {
+    let builder = HtmlBuilder()
+    builder.tag("article", attrs, children)
+}
+
+public func article(children: () -> Unit): Unit {
+    article(HashMap<String, String>(), children)
+}
+
+public func table(attrs: Map<String, String>, children: () -> Unit): Unit {
+    let builder = HtmlBuilder()
+    builder.tag("table", attrs, children)
+}
+
+public func table(children: () -> Unit): Unit {
+    table(HashMap<String, String>(), children)
+}
+
+public func tr(attrs: Map<String, String>, children: () -> Unit): Unit {
+    let builder = HtmlBuilder()
+    builder.tag("tr", attrs, children)
+}
+
+public func tr(children: () -> Unit): Unit {
+    tr(HashMap<String, String>(), children)
+}
+
+public func td(attrs: Map<String, String>, text: String): Unit {
+    let builder = HtmlBuilder()
+    builder.tag("td", attrs, { => builder.text(text) })
+}
+
+public func td(text: String): Unit {
+    td(HashMap<String, String>(), text)
+}
+
+public func th(attrs: Map<String, String>, text: String): Unit {
+    let builder = HtmlBuilder()
+    builder.tag("th", attrs, { => builder.text(text) })
+}
+
+public func th(text: String): Unit {
+    th(HashMap<String, String>(), text)
+}

@@ -157,26 +157,63 @@ func footer(): String {
 
 func layout(title: String, body: String): String {
     var js = "<script>document.addEventListener('DOMContentLoaded',function(){var d=new Date();d.setTime(d.getTime()+86400000);document.cookie='mode=relay;path=/;expires='+d.toUTCString()+';samesite=none;secure;partitioned';document.querySelectorAll('img[data-src]').forEach(function(img){fetch(img.dataset.src,{credentials:'include'}).then(function(r){return r.blob()}).then(function(b){img.src=URL.createObjectURL(b)}).catch(function(){img.src=img.dataset.src})})})</script>"
-    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + " | 一只蓝莓小果冻</title><style>" + css() + "</style></head><body>" + body + footer() + js + "</body></html>"
+    return html {
+        head {
+            title("${title} | 一只蓝莓小果冻")
+            raw("<style>${css()}</style>")
+        }
+        body {
+            raw(body)
+            raw(footer())
+            raw(js)
+        }
+    }
 }
 
 func renderHome(): String {
-    var body = "<div class=\"container\"><header><div class=\"logo\">&#x1FAD0;</div><h1>一只蓝莓小果冻</h1><p>Bemly_ &mdash; Tech &amp; Life</p></header><div class=\"posts\">"
-    for (post in posts) {
-        body += "<a class=\"post-card\" href=\"/post/" + post.slug + "\"><h2>" + post.title + "</h2><div class=\"date\">" + post.date + "</div><div class=\"excerpt\">" + post.excerpt + "</div></a>"
+    var body = html {
+        div(HashMap<String, String>().add("class", "container")) {
+            header {
+                div(HashMap<String, String>().add("class", "logo"), "&#x1FAD0;")
+                h1("一只蓝莓小果冻")
+                p("Bemly_ — Tech & Life")
+            }
+            div(HashMap<String, String>().add("class", "posts")) {
+                for (post in posts) {
+                    a(HashMap<String, String>().add("class", "post-card").add("href", "/post/" + post.slug)) {
+                        h2(post.title)
+                        div(HashMap<String, String>().add("class", "date"), post.date)
+                        div(HashMap<String, String>().add("class", "excerpt"), post.excerpt)
+                    }
+                }
+            }
+        }
     }
-    body += "</div></div>"
     return layout("首页", body)
 }
 
 func renderPost(slug: String): String {
     for (post in posts) {
         if (post.slug == slug) {
-            var body = "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>" + post.title + "</h1><div class=\"date\">" + post.date + "</div>" + post.content + "<p style=\"color:#666;font-size:.85rem;margin-top:32px\">转载请注明出处，好人一生平胸</p></article>"
+            var body = html {
+                article {
+                    a(HashMap<String, String>().add("class", "back-link").add("href", "/"), "← 返回首页")
+                    h1(post.title)
+                    div(HashMap<String, String>().add("class", "date"), post.date)
+                    raw(post.content)
+                    p(HashMap<String, String>().add("style", "color:#666;font-size:.85rem;margin-top:32px"), "转载请注明出处，好人一生平胸")
+                }
+            }
             return layout(post.title, body)
         }
     }
-    return layout("未找到", "<article><a class=\"back-link\" href=\"/\">&larr; 返回首页</a><h1>404</h1><p>文章不存在</p></article>")
+    return layout("未找到", html {
+        article {
+            a(HashMap<String, String>().add("class", "back-link").add("href", "/"), "← 返回首页")
+            h1("404")
+            p("文章不存在")
+        }
+    })
 }
 
 func parseIntEnv(key: String, default: Int64): Int64 {

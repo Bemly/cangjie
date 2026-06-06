@@ -63,12 +63,41 @@
 ├── cangjie/                   # 本仓库 — GitHub bemly/cangjie 的 clone，即 cjpm 项目根
 │   ├── cjpm.toml
 │   ├── LICENSE
-│   └── src/main.cj
+│   ├── src/main.cj
+│   ├── src/post_*.cj          # 文章（每个文章一个文件）
+│   ├── lib/html-builder/      # HTML Builder DSL 库
+│   ├── nginx/                 # 图床 nginx 配置
+│   └── chrome-extension/      # Chrome 扩展（绕过第三方 cookie）
 ├── spire-doc/                 # Spire 天擎框架 API 文档 (gitcode)
 ├── cangjie-docs/              # Cangjie SDK 开发指南 (gitcode)
 ├── cangjie-stdx-doc/          # Cangjie STDX 拓展标准库 + 文档 (gitcode)
 └── cangjie-corpus/            # CangjieCorpus 语料库，含标准库 API 参考 (gitcode)
 ```
+
+## HTML Builder DSL
+
+项目内置 HTML Builder DSL 库（`lib/html-builder/`），用于声明式生成 HTML：
+
+```cangjie
+import html_builder.*
+
+let page = html {
+    head {
+        title("我的博客")
+    }
+    body {
+        div(HashMap<String, String>().add("class", "container")) {
+            h1("标题")
+            p("内容")
+            a("https://example.com", "链接")
+        }
+    }
+}
+```
+
+支持的标签：`html`, `head`, `body`, `div`, `span`, `h1`-`h4`, `p`, `title`, `a`, `img`, `ul`, `li`, `br`, `hr`, `code`, `pre`, `style`, `script`, `meta`, `link`
+
+特殊功能：`raw(html)` 插入原始 HTML，`text(content)` 插入文本（自动转义）
 
 ## 运行时依赖
 

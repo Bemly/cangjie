@@ -24,8 +24,9 @@
 ├── src/
 │   ├── main.cj            # 博客源码
 │   ├── main_test.cj       # 测试
-│   ├── post_*.cj          # 文章（每个文章一个文件）
-│   └── post_fnnasBypass.cj
+│   └── post_*.cj          # 文章（每个文章一个文件）
+├── lib/
+│   └── html-builder/      # HTML Builder DSL 库
 ├── nginx/
 │   ├── cangjie-imagebed.conf  # 图床 nginx 配置
 │   ├── nginx-limit.conf      # 频率限制配置
@@ -35,6 +36,32 @@
 ├── LICENSE                # MulanPubL-2.0
 └── CLAUDE.md              # Claude Code 工作指引
 ```
+
+HTML Builder DSL
+-------------
+
+项目内置 HTML Builder DSL 库，用于声明式生成 HTML：
+
+```cangjie
+import html_builder.*
+
+let page = html {
+    head {
+        title("我的博客")
+    }
+    body {
+        div(HashMap<String, String>().add("class", "container")) {
+            h1("标题")
+            p("内容")
+            a("https://example.com", "链接")
+        }
+    }
+}
+```
+
+支持的标签：`html`, `head`, `body`, `div`, `span`, `h1`-`h4`, `p`, `title`, `a`, `img`, `ul`, `li`, `br`, `hr`, `code`, `pre`, `style`, `script`, `meta`, `link`
+
+特殊功能：`raw(html)` 插入原始 HTML，`text(content)` 插入文本（自动转义）
 
 图床
 -------------
