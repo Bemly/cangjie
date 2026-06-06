@@ -76,7 +76,7 @@ public class HtmlBuilder {
 private var _currentBuilder: ?HtmlBuilder = None
 
 public func getCurrentBuilder(): HtmlBuilder {
-    if (let Some(b) = _currentBuilder) {
+    if (let Some(b) <- _currentBuilder) {
         return b
     }
     let b = HtmlBuilder()
