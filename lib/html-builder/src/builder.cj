@@ -28,8 +28,8 @@ public class HtmlBuilder {
     public func tag(name: String, attrs: Map<String, String>, children: () -> Unit): Unit {
         addIndent()
         _sb.append("<${name}")
-        for (entry in attrs) {
-            _sb.append(" ${entry.key}=\"${escapeAttr(entry.value)}\"")
+        for (key in attrs.keys()) {
+            _sb.append(" ${key}=\"${escapeAttr(attrs.get(key) ?? "")}\"")
         }
         _sb.append(">")
         _indent++
@@ -47,8 +47,8 @@ public class HtmlBuilder {
     public func selfClosing(name: String, attrs: Map<String, String>): Unit {
         addIndent()
         _sb.append("<${name}")
-        for (entry in attrs) {
-            _sb.append(" ${entry.key}=\"${escapeAttr(entry.value)}\"")
+        for (key in attrs.keys()) {
+            _sb.append(" ${key}=\"${escapeAttr(attrs.get(key) ?? "")}\"")
         }
         _sb.append(" />")
     }
