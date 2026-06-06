@@ -1,5 +1,7 @@
 package html_builder
 
+import std.collection.*
+
 public class HtmlBuilder {
     private var _sb: StringBuilder
     private var _indent: Int64
