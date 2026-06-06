@@ -28,6 +28,8 @@ func initPosts() {
     postList.add(getCloudServerJourneyPost())
     postList.add(getJavaverseChatPost())
     postList.add(getAzureOpenaiPost())
+    postList.add(getAzureOpenaiChatgptPost())
+    postList.add(getAzureOpenaiAccountPost())
     postList.add(getFnnasBypassPost())
     postList.add(getThirdPartyCookiePost())
     postList.add(getChromeExtensionPost())
