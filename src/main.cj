@@ -160,14 +160,7 @@ func renderFooter(): String {
                 a(attrs("href", "https://0xav10086.space/", "target", "_blank"), "0xav10086.space")
                 a(attrs("href", "https://bemly.moe/", "target", "_blank"), "bemly.moe")
             }
-            p {
-                a(attrs("href", "https://beian.miit.gov.cn/", "style", "color:#555;text-decoration:none"), "蜀ICP备2024056996号")
-                text(" | 由")
-                a(attrs("href", "https://cangjie-lang.cn/", "style", "color:#555;text-decoration:none"), "仓颉")
-                text("和")
-                a(attrs("href", "https://docs.cangjie-spire.com/", "style", "color:#555;text-decoration:none"), "天擎")
-                text("驱动")
-            }
+            raw("<p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | 由<a href=\"https://cangjie-lang.cn/\" style=\"color:#555;text-decoration:none\">仓颉</a>和<a href=\"https://docs.cangjie-spire.com/\" style=\"color:#555;text-decoration:none\">天擎</a>驱动</p>")
             p("© 2024-2026 Bemly_")
         }
     }
@@ -175,10 +168,12 @@ func renderFooter(): String {
 
 func layout(title: String, bodyHtml: String): String {
     var js = "<script>document.addEventListener('DOMContentLoaded',function(){var d=new Date();d.setTime(d.getTime()+86400000);document.cookie='mode=relay;path=/;expires='+d.toUTCString()+';samesite=none;secure;partitioned';document.querySelectorAll('img[data-src]').forEach(function(img){fetch(img.dataset.src,{credentials:'include'}).then(function(r){return r.blob()}).then(function(b){img.src=URL.createObjectURL(b)}).catch(function(){img.src=img.dataset.src})})})</script>"
+    let fullTitle = title + " | 一只蓝莓小果冻"
+    let styleTag = "<style>" + css() + "</style>"
     return html {
         head {
-            title("${title} | 一只蓝莓小果冻")
-            raw("<style>${css()}</style>")
+            title(fullTitle)
+            raw(styleTag)
         }
         body {
             raw(bodyHtml)
