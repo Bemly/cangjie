@@ -11,8 +11,6 @@ import std.fs.*
 import std.io.*
 import stdx.log.*
 import stdx.logger.*
-import stdx.net.http.*
-import stdx.net.tls.*
 
 let log = SimpleLogger(getStdOut())
 let posts = ArrayList<Post>()
