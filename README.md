@@ -14,18 +14,67 @@
 - **框架**: [Spire 天擎](https://docs.cangjie-spire.com) — ASP.NET Core 风格 middleware pipeline
 - **Web 服务器**: Caddy (Let's Encrypt TLS, www 自签证书)
 - **部署**: 阿里云 ECS Arch Linux, 400MB RAM
+- **图床**: 飞牛 NAS + nginx 静态文件服务
 
 项目结构
 -------------
 
 ```
-├── cjpm.toml          # 仓颉包配置
+├── cjpm.toml              # 仓颉包配置
 ├── src/
-│   └── main.cj        # 博客源码
-├── Caddyfile          # Caddy Web 服务器配置
-├── LICENSE            # MulanPubL-2.0
-└── CLAUDE.md          # Claude Code 工作指引
+│   ├── main.cj            # 博客源码
+│   ├── main_test.cj       # 测试
+│   ├── post_*.cj          # 文章（每个文章一个文件）
+│   └── post_fnnasBypass.cj
+├── nginx/
+│   ├── cangjie-imagebed.conf  # 图床 nginx 配置
+│   ├── nginx-limit.conf      # 频率限制配置
+│   └── README.md              # 部署说明
+├── chrome-extension/      # Chrome 扩展（绕过第三方 cookie）
+├── Caddyfile              # Caddy Web 服务器配置
+├── LICENSE                # MulanPubL-2.0
+└── CLAUDE.md              # Claude Code 工作指引
 ```
+
+图床
+-------------
+
+图床通过飞牛 NAS 的 nginx 静态文件服务实现，URL 格式：
+
+```
+https://bemly-moe.5ddd.com/cangjie/{文章名}/{序号}.avif
+```
+
+**问题**：Chrome 133+ 的 Third-Party Cookie Phaseout 导致跨站 cookie 无法正常工作。
+
+**解决方案**：
+- Firefox：直接支持第三方 cookie，图片正常加载
+- Chrome：需要安装扩展绕过限制
+
+详见 [Chrome 扩展](#chrome-扩展) 和 [nginx 配置](nginx/README.md)
+
+Chrome 扩展
+-------------
+
+Chrome 133+ 默认限制第三方 cookie，从 `bemly.top` 无法设置 `bemly-moe.5ddd.com` 的 cookie。
+
+**解决方案**：使用 Chrome 扩展通过 `chrome.cookies.set` API 设置 cookie。
+
+**安装方法**：
+1. 访问 `https://bemly.top/`
+2. 完成 Turnstile 验证
+3. Chrome 用户会跳转到安装页面
+4. 下载 `chrome-extension.zip` 并解压
+5. 打开 Chrome，访问 `chrome://extensions/`
+6. 开启「开发者模式」
+7. 点击「加载已解压的扩展程序」
+8. 选择解压后的文件夹
+
+**扩展原理**：
+- `background.js`：使用 `chrome.cookies.set` 设置 `bemly-moe.5ddd.com` 的 `mode=relay` cookie
+- `content.js`：检测 Turnstile 验证完成，自动跳转到首页
+
+详见 [Chrome 第三方 Cookie 限制](https://bemly.top/post/third-party-cookie)
 
 构建
 -------------

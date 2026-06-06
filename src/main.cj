@@ -52,6 +52,7 @@ func initPosts() {
     posts.add(getAzureOpenaiPost())
     posts.add(getFnnasBypassPost())
     posts.add(getThirdPartyCookiePost())
+    posts.add(getChromeExtensionPost())
 }
 
 func css(): String {
