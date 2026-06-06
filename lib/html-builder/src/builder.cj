@@ -229,9 +229,19 @@ public func attrs(key: String, value: String): HashMap<String, String> {
     return map
 }
 
-public func HashMap<String, String>.put(key: String, value: String): HashMap<String, String> {
-    this.add(key, value)
-    return this
+public func attrs(k1: String, v1: String, k2: String, v2: String): HashMap<String, String> {
+    let map = HashMap<String, String>()
+    map.add(k1, v1)
+    map.add(k2, v2)
+    return map
+}
+
+public func attrs(k1: String, v1: String, k2: String, v2: String, k3: String, v3: String): HashMap<String, String> {
+    let map = HashMap<String, String>()
+    map.add(k1, v1)
+    map.add(k2, v2)
+    map.add(k3, v3)
+    return map
 }
 
 public func header(attrs: Map<String, String>, children: () -> Unit): Unit {
