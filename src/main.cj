@@ -139,7 +139,7 @@ func turnstilePage(): String {
     p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
     p += "</div></div><script>function onTurnstileDone(token){"
     p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)})"
-    p += ".then(function(r){if(r.ok){var ua=navigator.userAgent;var isChrome=ua.indexOf('Chrome')>-1&&ua.indexOf('Edg')===-1&&ua.indexOf('OPR')===-1;var isSafari=ua.indexOf('Safari')>-1&&ua.indexOf('Chrome')===-1;if(isSafari){window.location.href='/safari-unsupported'}else if(isChrome){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
+    p += ".then(function(r){if(r.ok){var ua=navigator.userAgent;var isSafari=ua.indexOf('Safari')>-1&&ua.indexOf('Chrome')===-1;var isChromium=ua.indexOf('Chrome')>-1;if(isSafari){window.location.href='/safari-unsupported'}else if(isChromium){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
     p += "</script></body></html>"
     return p
 }
@@ -210,8 +210,12 @@ main(args: Array<String>): Int64 {
         if (!turnstileEnabled || isTokenValid(cookieVal)) {
             let extInstalled = context.request.cookies.get("extension_installed") ?? ""
             let ua = context.request.headers.get("User-Agent") ?? ""
-            let isChrome = ua.contains("Chrome") && !ua.contains("Edg") && !ua.contains("OPR")
-            if (isChrome && extInstalled != "true") {
+            let isSafari = ua.contains("Safari") && !ua.contains("Chrome")
+            let isChromium = ua.contains("Chrome")
+            if (isSafari) {
+                context.response.statusCode = 302
+                context.response.headers.add("Location", "/safari-unsupported")
+            } else if (isChromium && extInstalled != "true") {
                 context.response.statusCode = 302
                 context.response.headers.add("Location", "/install-extension")
             } else {
@@ -228,8 +232,12 @@ main(args: Array<String>): Int64 {
         if (!turnstileEnabled || isTokenValid(cookieVal)) {
             let extInstalled = context.request.cookies.get("extension_installed") ?? ""
             let ua = context.request.headers.get("User-Agent") ?? ""
-            let isChrome = ua.contains("Chrome") && !ua.contains("Edg") && !ua.contains("OPR")
-            if (isChrome && extInstalled != "true") {
+            let isSafari = ua.contains("Safari") && !ua.contains("Chrome")
+            let isChromium = ua.contains("Chrome")
+            if (isSafari) {
+                context.response.statusCode = 302
+                context.response.headers.add("Location", "/safari-unsupported")
+            } else if (isChromium && extInstalled != "true") {
                 context.response.statusCode = 302
                 context.response.headers.add("Location", "/install-extension")
             } else {
