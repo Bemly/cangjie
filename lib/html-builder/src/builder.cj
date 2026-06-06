@@ -223,6 +223,17 @@ public func link(attrs: Map<String, String>): Unit {
     builder.selfClosing("link", attrs)
 }
 
+public func attrs(key: String, value: String): HashMap<String, String> {
+    let map = HashMap<String, String>()
+    map.add(key, value)
+    return map
+}
+
+public func HashMap<String, String>.put(key: String, value: String): HashMap<String, String> {
+    this.add(key, value)
+    return this
+}
+
 public func header(attrs: Map<String, String>, children: () -> Unit): Unit {
     let builder = HtmlBuilder()
     builder.tag("header", attrs, children)
