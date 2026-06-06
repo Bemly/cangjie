@@ -1,16 +1,16 @@
 // 设置 bemly-moe.5ddd.com 的 cookie
 function setRelayCookie() {
   const expiryDate = Math.floor(Date.now() / 1000) + 86400; // 1天后
+  const cookieAPI = typeof browser !== 'undefined' ? browser.cookies : chrome.cookies;
 
   console.log("[Bemly Background] 开始设置 cookie...");
-  chrome.cookies.set({
+  cookieAPI.set({
     url: "https://bemly-moe.5ddd.com/",
     name: "mode",
     value: "relay",
     path: "/",
     secure: true,
     sameSite: "no_restriction",
-    httpOnly: false,
     expirationDate: expiryDate
   }, (cookie) => {
     if (chrome.runtime.lastError) {
