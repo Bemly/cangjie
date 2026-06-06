@@ -132,33 +132,60 @@ func isCloudflareSuccess(respStr: String): Bool {
 }
 
 func turnstilePage(): String {
-    var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
-    p += "<title>人机验证 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
-    p += "<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script>"
-    p += "</head><body><div class=\"turnstile-wrap\"><div class=\"turnstile-box\">"
-    p += "<div class=\"logo\">&#x1FAD0;</div><p>请完成人机验证以继续访问</p>"
-    p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
-    p += "</div></div><script>function onTurnstileDone(token){"
-    p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)})"
-    p += ".then(function(r){if(r.ok){var ua=navigator.userAgent;var isSafari=ua.indexOf('Safari')>-1&&ua.indexOf('Chrome')===-1;var isChromium=ua.indexOf('Chrome')>-1;if(isSafari){window.location.href='/safari-unsupported'}else if(isChromium){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
-    p += "</script></body></html>"
-    return p
+    return html {
+        head {
+            title("人机验证 | 一只蓝莓小果冻")
+            raw("<style>${css()}</style>")
+            script("")
+            raw("<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script>")
+        }
+        body {
+            div(attrs("class", "turnstile-wrap")) {
+                div(attrs("class", "turnstile-box")) {
+                    div(attrs("class", "logo")) { raw("&#x1FAD0;") }
+                    p("请完成人机验证以继续访问")
+                    raw("<div class=\"cf-turnstile\" data-sitekey=\"${SITE_KEY}\" data-callback=\"onTurnstileDone\"></div>")
+                }
+            }
+            raw("<script>function onTurnstileDone(token){fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)}).then(function(r){if(r.ok){var ua=navigator.userAgent;var isSafari=ua.indexOf('Safari')>-1&&ua.indexOf('Chrome')===-1;var isChromium=ua.indexOf('Chrome')>-1;if(isSafari){window.location.href='/safari-unsupported'}else if(isChromium){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}</script>")
+        }
+    }
 }
 
 func footer(): String {
-    var f = "<footer><div class=\"divider\"></div><div class=\"friends\">"
-    f += "<a href=\"https://0xav10086.space/\" target=\"_blank\">0xav10086.space</a>"
-    f += "<a href=\"https://bemly.moe/\" target=\"_blank\">bemly.moe</a>"
-    f += "</div><p><a href=\"https://beian.miit.gov.cn/\" style=\"color:#555;text-decoration:none\">蜀ICP备2024056996号</a> | "
-    f += "由<a href=\"https://cangjie-lang.cn/\" style=\"color:#555;text-decoration:none\">仓颉</a>和"
-    f += "<a href=\"https://docs.cangjie-spire.com/\" style=\"color:#555;text-decoration:none\">天擎</a>驱动</p>"
-    f += "<p>&copy; 2024-2026 Bemly_</p></footer>"
-    return f
+    return html {
+        footer {
+            div(attrs("class", "divider")) {}
+            div(attrs("class", "friends")) {
+                a(attrs("href", "https://0xav10086.space/", "target", "_blank"), "0xav10086.space")
+                a(attrs("href", "https://bemly.moe/", "target", "_blank"), "bemly.moe")
+            }
+            p {
+                a(attrs("href", "https://beian.miit.gov.cn/", "style", "color:#555;text-decoration:none"), "蜀ICP备2024056996号")
+                text(" | 由")
+                a(attrs("href", "https://cangjie-lang.cn/", "style", "color:#555;text-decoration:none"), "仓颉")
+                text("和")
+                a(attrs("href", "https://docs.cangjie-spire.com/", "style", "color:#555;text-decoration:none"), "天擎")
+                text("驱动")
+            }
+            p("© 2024-2026 Bemly_")
+        }
+    }
 }
 
 func layout(title: String, bodyHtml: String): String {
     var js = "<script>document.addEventListener('DOMContentLoaded',function(){var d=new Date();d.setTime(d.getTime()+86400000);document.cookie='mode=relay;path=/;expires='+d.toUTCString()+';samesite=none;secure;partitioned';document.querySelectorAll('img[data-src]').forEach(function(img){fetch(img.dataset.src,{credentials:'include'}).then(function(r){return r.blob()}).then(function(b){img.src=URL.createObjectURL(b)}).catch(function(){img.src=img.dataset.src})})})</script>"
-    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>${title} | 一只蓝莓小果冻</title><style>${css()}</style></head><body>${bodyHtml}${footer()}${js}</body></html>"
+    return html {
+        head {
+            title("${title} | 一只蓝莓小果冻")
+            raw("<style>${css()}</style>")
+        }
+        body {
+            raw(bodyHtml)
+            raw(footer())
+            raw(js)
+        }
+    }
 }
 
 func renderHome(): String {
@@ -344,33 +371,32 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/install-extension") { context =>
-        var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
-        p += "<title>安装扩展 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
-        p += "<meta http-equiv=\"refresh\" content=\"5\">"
-        p += "</head><body><div class=\"container\" style=\"padding:40px 20px\">"
-        p += "<h1 style=\"color:#fff;margin-bottom:24px\">检测到 Chrome 浏览器</h1>"
-        p += "<p style=\"color:#888;margin-bottom:32px\">Chrome 限制第三方 Cookie，图床图片无法加载。请选择：</p>"
-        p += "<div style=\"display:flex;gap:24px;flex-wrap:wrap\">"
-        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
-        p += "<h2 style=\"color:#00ff88;font-size:1.2rem;margin-bottom:16px\">安装 Chrome 扩展</h2>"
-        p += "<ol style=\"color:#c0c0c8;line-height:2\">"
-        p += "<li>下载扩展：<a href=\"/chrome-extension.zip\" style=\"color:#00ff88\">chrome-extension.zip</a></li>"
-        p += "<li>解压到任意目录</li>"
-        p += "<li>打开 Chrome，访问 <code style=\"background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px\">chrome://extensions/</code></li>"
-        p += "<li>开启「开发者模式」</li>"
-        p += "<li>点击「加载已解压的扩展程序」</li>"
-        p += "<li>选择解压后的文件夹</li>"
-        p += "</ol>"
-        p += "<p style=\"color:#888;font-size:.85rem;margin-top:16px\">安装后自动跳转到文章页面（Chrome 需要安装插件才能加载图片）</p>"
-        p += "</div>"
-        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
-        p += "<h2 style=\"color:#e0e0e0;font-size:1.2rem;margin-bottom:16px\">使用 Firefox 浏览器</h2>"
-        p += "<p style=\"color:#c0c0c8;line-height:1.7\">Firefox 不限制第三方 Cookie，可以直接访问图床图片。</p>"
-        p += "<a href=\"https://www.mozilla.org/firefox/\" target=\"_blank\" style=\"display:inline-block;margin-top:16px;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px\">下载 Firefox</a>"
-        p += "</div>"
-        p += "</div>"
-        p += "<p style=\"color:#555;font-size:.8rem;margin-top:32px\">页面每 5 秒自动刷新，检测插件是否已安装</p>"
-        p += "</div></body></html>"
+        var p = html {
+            head {
+                title("安装扩展 | 一只蓝莓小果冻")
+                raw("<style>${css()}</style>")
+                raw("<meta http-equiv=\"refresh\" content=\"5\">")
+            }
+            body {
+                div(attrs("class", "container", "style", "padding:40px 20px")) {
+                    h1(attrs("style", "color:#fff;margin-bottom:24px"), "检测到 Chrome 浏览器")
+                    p(attrs("style", "color:#888;margin-bottom:32px"), "Chrome 限制第三方 Cookie，图床图片无法加载。请选择：")
+                    div(attrs("style", "display:flex;gap:24px;flex-wrap:wrap")) {
+                        div(attrs("style", "flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px")) {
+                            h2(attrs("style", "color:#00ff88;font-size:1.2rem;margin-bottom:16px"), "安装 Chrome 扩展")
+                            raw("<ol style=\"color:#c0c0c8;line-height:2\"><li>下载扩展：<a href=\"/chrome-extension.zip\" style=\"color:#00ff88\">chrome-extension.zip</a></li><li>解压到任意目录</li><li>打开 Chrome，访问 <code style=\"background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px\">chrome://extensions/</code></li><li>开启「开发者模式」</li><li>点击「加载已解压的扩展程序」</li><li>选择解压后的文件夹</li></ol>")
+                            p(attrs("style", "color:#888;font-size:.85rem;margin-top:16px"), "安装后自动跳转到文章页面（Chrome 需要安装插件才能加载图片）")
+                        }
+                        div(attrs("style", "flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px")) {
+                            h2(attrs("style", "color:#e0e0e0;font-size:1.2rem;margin-bottom:16px"), "使用 Firefox 浏览器")
+                            p(attrs("style", "color:#c0c0c8;line-height:1.7"), "Firefox 不限制第三方 Cookie，可以直接访问图床图片。")
+                            a(attrs("href", "https://www.mozilla.org/firefox/", "target", "_blank", "style", "display:inline-block;margin-top:16px;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px"), "下载 Firefox")
+                        }
+                    }
+                    p(attrs("style", "color:#555;font-size:.8rem;margin-top:32px"), "页面每 5 秒自动刷新，检测插件是否已安装")
+                }
+            }
+        }
         context.response.write(p)
     }
 
@@ -395,28 +421,30 @@ main(args: Array<String>): Int64 {
     }
 
     host.mapGet("/safari-unsupported") { context =>
-        var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
-        p += "<title>浏览器不支持 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
-        p += "</head><body><div class=\"container\" style=\"padding:40px 20px\">"
-        p += "<h1 style=\"color:#fff;margin-bottom:24px\">Safari 不支持图床图片加载</h1>"
-        p += "<p style=\"color:#888;margin-bottom:32px\">Safari 的 Intelligent Tracking Prevention (ITP) 阻止第三方 Cookie，图床图片无法加载。</p>"
-        p += "<div style=\"display:flex;gap:24px;flex-wrap:wrap\">"
-        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
-        p += "<h2 style=\"color:#00ff88;font-size:1.2rem;margin-bottom:16px\">使用 Chrome + 扩展</h2>"
-        p += "<p style=\"color:#c0c0c8;line-height:1.7\">Chrome 可以通过扩展绕过第三方 Cookie 限制。</p>"
-        p += "<ol style=\"color:#c0c0c8;line-height:2;margin-top:16px\">"
-        p += "<li>下载并安装 <a href=\"https://www.google.com/chrome/\" target=\"_blank\" style=\"color:#00ff88\">Chrome 浏览器</a></li>"
-        p += "<li>访问 <a href=\"/install-extension\" style=\"color:#00ff88\">安装扩展页面</a></li>"
-        p += "<li>安装扩展后即可正常访问</li>"
-        p += "</ol>"
-        p += "</div>"
-        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
-        p += "<h2 style=\"color:#e0e0e0;font-size:1.2rem;margin-bottom:16px\">使用 Firefox 浏览器</h2>"
-        p += "<p style=\"color:#c0c0c8;line-height:1.7\">Firefox 不限制第三方 Cookie，可以直接访问图床图片。</p>"
-        p += "<a href=\"https://www.mozilla.org/firefox/\" target=\"_blank\" style=\"display:inline-block;margin-top:16px;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px\">下载 Firefox</a>"
-        p += "</div>"
-        p += "</div>"
-        p += "</div></body></html>"
+        var p = html {
+            head {
+                title("浏览器不支持 | 一只蓝莓小果冻")
+                raw("<style>${css()}</style>")
+            }
+            body {
+                div(attrs("class", "container", "style", "padding:40px 20px")) {
+                    h1(attrs("style", "color:#fff;margin-bottom:24px"), "Safari 不支持图床图片加载")
+                    p(attrs("style", "color:#888;margin-bottom:32px"), "Safari 的 Intelligent Tracking Prevention (ITP) 阻止第三方 Cookie，图床图片无法加载。")
+                    div(attrs("style", "display:flex;gap:24px;flex-wrap:wrap")) {
+                        div(attrs("style", "flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px")) {
+                            h2(attrs("style", "color:#00ff88;font-size:1.2rem;margin-bottom:16px"), "使用 Chrome + 扩展")
+                            p(attrs("style", "color:#c0c0c8;line-height:1.7"), "Chrome 可以通过扩展绕过第三方 Cookie 限制。")
+                            raw("<ol style=\"color:#c0c0c8;line-height:2;margin-top:16px\"><li>下载并安装 <a href=\"https://www.google.com/chrome/\" target=\"_blank\" style=\"color:#00ff88\">Chrome 浏览器</a></li><li>访问 <a href=\"/install-extension\" style=\"color:#00ff88\">安装扩展页面</a></li><li>安装扩展后即可正常访问</li></ol>")
+                        }
+                        div(attrs("style", "flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px")) {
+                            h2(attrs("style", "color:#e0e0e0;font-size:1.2rem;margin-bottom:16px"), "使用 Firefox 浏览器")
+                            p(attrs("style", "color:#c0c0c8;line-height:1.7"), "Firefox 不限制第三方 Cookie，可以直接访问图床图片。")
+                            a(attrs("href", "https://www.mozilla.org/firefox/", "target", "_blank", "style", "display:inline-block;margin-top:16px;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px"), "下载 Firefox")
+                        }
+                    }
+                }
+            }
+        }
         context.response.write(p)
     }
 
