@@ -136,7 +136,7 @@ func turnstilePage(): String {
     p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
     p += "</div></div><script>function onTurnstileDone(token){"
     p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)})"
-    p += ".then(function(r){if(r.ok)location.reload();else alert('验证失败，请刷新重试')})}"
+    p += ".then(function(r){if(r.ok){var isChrome=navigator.userAgent.indexOf('Chrome')>-1&&navigator.userAgent.indexOf('Edg')===-1;if(isChrome){document.body.innerHTML='<div class=\\'turnstile-wrap\\'><div class=\\'turnstile-box\\'><div class=\\'logo\\'>&#x1FAD0;</div><p>检测到您使用的是 Chrome 浏览器</p><p style=\\'color:#888;font-size:.85rem;margin-bottom:24px\\'>Chrome 限制第三方 Cookie，图床图片可能无法加载</p><div style=\\'display:flex;gap:16px;justify-content:center\\'><a href=\\'/install-extension\\' style=\\'display:inline-block;padding:12px 24px;background:#00ff88;color:#0a0a10;text-decoration:none;border-radius:8px;font-weight:bold\\'>安装插件</a><a href=\\'https://www.mozilla.org/firefox/\\' target=\\'_blank\\' style=\\'display:inline-block;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px\\'>使用 Firefox</a></div></div></div>'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
     p += "</script></body></html>"
     return p
 }
@@ -278,6 +278,28 @@ main(args: Array<String>): Int64 {
             context.response.statusCode = 403
             context.response.write("forbidden")
         }
+    }
+
+    host.mapGet("/install-extension") { context =>
+        var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+        p += "<title>安装扩展 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
+        p += "</head><body><div class=\"container\" style=\"padding:40px 20px\">"
+        p += "<h1 style=\"color:#fff;margin-bottom:24px\">安装 Chrome 扩展</h1>"
+        p += "<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
+        p += "<h2 style=\"color:#00ff88;font-size:1.2rem;margin-bottom:16px\">安装步骤</h2>"
+        p += "<ol style=\"color:#c0c0c8;line-height:2\">"
+        p += "<li>下载扩展文件：<a href=\"/chrome-extension.zip\" style=\"color:#00ff88\">chrome-extension.zip</a></li>"
+        p += "<li>解压到任意目录</li>"
+        p += "<li>打开 Chrome，访问 <code style=\"background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px\">chrome://extensions/</code></li>"
+        p += "<li>开启右上角「开发者模式」</li>"
+        p += "<li>点击「加载已解压的扩展程序」</li>"
+        p += "<li>选择解压后的 <code style=\"background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px\">chrome-extension</code> 文件夹</li>"
+        p += "</ol>"
+        p += "<p style=\"color:#888;font-size:.85rem;margin-top:24px\">安装完成后刷新页面即可正常加载图片</p>"
+        p += "</div>"
+        p += "<a href=\"/\" style=\"display:inline-block;color:#00ff88;text-decoration:none;margin-top:24px\">&larr; 返回首页</a>"
+        p += "</div></body></html>"
+        context.response.write(p)
     }
 
     host.run("http://127.0.0.1:996")
