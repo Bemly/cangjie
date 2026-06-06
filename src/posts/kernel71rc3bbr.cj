@@ -1,8 +1,9 @@
-package bemlyCJWeb
+package bemlyCJWeb.posts
 
 import html_builder.*
+import bemlyCJWeb.model.*
 
-func getKernel71rc3bbrPost(): Post {
+public func getKernel71rc3bbrPost(): Post {
     return Post(
         "kernel-71-rc3-bbr",
         "Kernel 7.1-rc3 + BBR on Arch",

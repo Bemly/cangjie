@@ -1,4 +1,4 @@
-package bemlyCJWeb
+package bemlyCJWeb.turnstile
 
 import std.collection.*
 import std.time.*
@@ -7,11 +7,23 @@ import stdx.logger.*
 import stdx.net.http.*
 import stdx.net.tls.*
 
+public class Config {
+    public var siteKey: String = ""
+    public var turnstileEnabled: Bool = true
+    public var maxTokens: Int64 = 20
+    public var blockMinutes: Int64 = 20
+    public var rateLimitSec: Int64 = 30
+
+    public init() {}
+}
+
 public class TurnstileState {
     public var secret: String = ""
     public var validTokens: HashSet<String> = HashSet<String>()
     public var rateLimit: HashMap<String, DateTime> = HashMap<String, DateTime>()
     public var blockUntil: DateTime = DateTime.UnixEpoch
+
+    public init() {}
 
     public func extractToken(body: String): String {
         let parts = body.split("token=")
@@ -50,7 +62,7 @@ public class TurnstileState {
         return respStr.contains("\"success\":true") || respStr.contains("\"success\": true")
     }
 
-    public func verify(tokenStr: String, log: SimpleLogger, remoteIp: String): Bool {
+    public func verify(tokenStr: String, log: SimpleLogger, remoteIp: String, config: Config): Bool {
         if (tokenStr == "" || secret == "") {
             return false
         }
@@ -58,13 +70,13 @@ public class TurnstileState {
         log.info("turnstile verify from " + remoteIp, [])
         let now = DateTime.nowUTC()
 
-        let cbErr = checkCircuitBreaker(now, Config())
+        let cbErr = checkCircuitBreaker(now, config)
         if (cbErr != "") {
             log.warn("turnstile blocked: " + cbErr, [])
             return false
         }
 
-        let rlErr = checkRateLimit(remoteIp, now, Config())
+        let rlErr = checkRateLimit(remoteIp, now, config)
         if (rlErr != "") {
             log.warn("turnstile rate limited: " + remoteIp, [])
             return false

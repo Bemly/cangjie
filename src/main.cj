@@ -11,6 +11,10 @@ import std.fs.*
 import std.io.*
 import stdx.log.*
 import stdx.logger.*
+import bemlyCJWeb.model.*
+import bemlyCJWeb.views.*
+import bemlyCJWeb.posts.*
+import bemlyCJWeb.turnstile.*
 
 let log = SimpleLogger(getStdOut())
 let posts = ArrayList<Post>()
@@ -26,6 +30,25 @@ func initPosts() {
     posts.add(getFnnasBypassPost())
     posts.add(getThirdPartyCookiePost())
     posts.add(getChromeExtensionPost())
+}
+
+func initConfig() {
+    config.siteKey = getVariable("TURNSTILE_SITE_KEY") ?? ""
+    config.turnstileEnabled = (getVariable("TURNSTILE_ENABLE") ?? "true") != "false"
+    config.maxTokens = parseIntEnv("TURNSTILE_MAX_TOKENS", 20)
+    config.blockMinutes = parseIntEnv("TURNSTILE_BLOCK_MINUTES", 20)
+    config.rateLimitSec = parseIntEnv("TURNSTILE_RATE_LIMIT_SEC", 30)
+    turnstileState.secret = getVariable("TURNSTILE_SECRET") ?? ""
+}
+
+func parseIntEnv(key: String, default: Int64): Int64 {
+    let val = getVariable(key) ?? ""
+    if (val == "") { return default }
+    try {
+        return Int64.parse(val)
+    } catch (e: Exception) {
+        return default
+    }
 }
 
 func checkBrowser(context: HttpContext): Bool {
@@ -48,7 +71,7 @@ func checkBrowser(context: HttpContext): Bool {
 
 main(args: Array<String>): Int64 {
     initPosts()
-    turnstileState.secret = getVariable("TURNSTILE_SECRET") ?? ""
+    initConfig()
 
     let builder = WebHost.createBuilder(args)
     builder.services.addRouting()
@@ -99,7 +122,7 @@ main(args: Array<String>): Int64 {
         var rawBody = String.fromUtf8(buf.slice(0, len))
         var tokenStr = turnstileState.extractToken(rawBody)
 
-        if (turnstileState.verify(tokenStr, log, context.request.remoteAddr)) {
+        if (turnstileState.verify(tokenStr, log, context.request.remoteAddr, config)) {
             var opts = CookieOptions(
                 httpOnly: true,
                 secure: true,

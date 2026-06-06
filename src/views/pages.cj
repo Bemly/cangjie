@@ -1,4 +1,4 @@
-package bemlyCJWeb
+package bemlyCJWeb.views
 
 import html_builder.*
 

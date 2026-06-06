@@ -1,6 +1,7 @@
-package bemlyCJWeb
+package bemlyCJWeb.views
 
 import html_builder.*
+import bemlyCJWeb.turnstile.*
 
 public func renderTurnstilePage(config: Config): String {
     return html { b =>

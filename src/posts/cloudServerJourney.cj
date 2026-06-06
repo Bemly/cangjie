@@ -1,8 +1,9 @@
-package bemlyCJWeb
+package bemlyCJWeb.posts
 
 import html_builder.*
+import bemlyCJWeb.model.*
 
-func getCloudServerJourneyPost(): Post {
+public func getCloudServerJourneyPost(): Post {
     return Post(
         "cloud-server-journey",
         "Cloud Server Journey",

@@ -1,7 +1,6 @@
-package bemlyCJWeb
+package bemlyCJWeb.views
 
 import html_builder.*
-import std.collection.*
 
 public func renderCss(): String {
     return """
@@ -69,57 +68,4 @@ public func renderLayout(title: String, bodyHtml: String): String {
             raw(b, js)
         }
     }
-}
-
-public func renderHome(posts: ArrayList<Post>): String {
-    let body = html { b =>
-        div(b, attrs("class", "container")) {
-            header(b) {
-                div(b, attrs("class", "logo")) {
-                    raw(b, "&#x1FAD0;")
-                }
-                h1(b, "一只蓝莓小果冻")
-                p(b, "Bemly_ — Tech & Life")
-            }
-            div(b, attrs("class", "posts")) {
-                for (post in posts) {
-                    a(b, attrs("class", "post-card", "href", "/post/" + post.slug)) {
-                        h2(b, post.title)
-                        div(b, attrs("class", "date")) {
-                            text(b, post.date)
-                        }
-                        div(b, attrs("class", "excerpt")) {
-                            text(b, post.excerpt)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return renderLayout("首页", body)
-}
-
-public func renderPost(post: Post): String {
-    let body = html { b =>
-        article(b) {
-            a(b, attrs("class", "back-link", "href", "/"), "← 返回首页")
-            h1(b, post.title)
-            div(b, attrs("class", "date")) {
-                text(b, post.date)
-            }
-            raw(b, post.renderContent())
-            p(b, attrs("style", "color:#666;font-size:.85rem;margin-top:32px"), "转载请注明出处，好人一生平胸")
-        }
-    }
-    return renderLayout(post.title, body)
-}
-
-public func render404(): String {
-    return renderLayout("未找到", html { b =>
-        article(b) {
-            a(b, attrs("class", "back-link", "href", "/"), "← 返回首页")
-            h1(b, "404")
-            p(b, "文章不存在")
-        }
-    })
 }

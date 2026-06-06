@@ -1,8 +1,9 @@
-package bemlyCJWeb
+package bemlyCJWeb.posts
 
 import html_builder.*
+import bemlyCJWeb.model.*
 
-func getArchLinux400mbPost(): Post {
+public func getArchLinux400mbPost(): Post {
     return Post(
         "arch-linux-400mb",
         "ECS 400MB 内存安装 Arch Linux",
