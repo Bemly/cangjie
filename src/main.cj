@@ -311,6 +311,20 @@ main(args: Array<String>): Int64 {
         context.response.write(p)
     }
 
+    host.mapGet("/chrome-extension.zip") { context =>
+        context.response.headers.cacheControl = ["no-store"]
+        context.response.headers.add("Content-Type", "application/zip")
+        context.response.headers.add("Content-Disposition", "attachment; filename=\"chrome-extension.zip\"")
+        var file = File("chrome-extension.zip")
+        if (file.exists()) {
+            var bytes = file.readBytes()
+            context.response.write(bytes)
+        } else {
+            context.response.statusCode = 404
+            context.response.write("File not found")
+        }
+    }
+
     host.run("http://127.0.0.1:996")
     return 0
 }
