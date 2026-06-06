@@ -9,6 +9,7 @@ import std.convert.*
 import std.env.*
 import std.time.*
 import std.fs.*
+import std.io.*
 import stdx.log.*
 import stdx.logger.*
 import stdx.net.http.*
@@ -317,8 +318,9 @@ main(args: Array<String>): Int64 {
         context.response.headers.add("Content-Type", "application/zip")
         context.response.headers.add("Content-Disposition", "attachment; filename=\"chrome-extension.zip\"")
         try {
-            var file = File("chrome-extension.zip", OpenMode.Read)
-            var bytes = file.readBytes()
+            var file = File("chrome-extension.zip", Read)
+            var bytes = readToEnd(file)
+            file.close()
             context.response.write(bytes)
         } catch (e: Exception) {
             context.response.statusCode = 404
