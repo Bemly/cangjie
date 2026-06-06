@@ -69,12 +69,12 @@ public func html(attrs: Map<String, String>, children: () -> Unit): String {
 }
 
 public func html(children: () -> Unit): String {
-    return html(Map<String, String>(), children)
+    return html(HashMap<String, String>(), children)
 }
 
 public func head(children: () -> Unit): Unit {
     let builder = HtmlBuilder()
-    builder.tag("head", Map<String, String>(), children)
+    builder.tag("head", HashMap<String, String>(), children)
 }
 
 public func body(attrs: Map<String, String>, children: () -> Unit): Unit {
@@ -83,7 +83,7 @@ public func body(attrs: Map<String, String>, children: () -> Unit): Unit {
 }
 
 public func body(children: () -> Unit): Unit {
-    body(Map<String, String>(), children)
+    body(HashMap<String, String>(), children)
 }
 
 public func div(attrs: Map<String, String>, children: () -> Unit): Unit {
@@ -92,7 +92,7 @@ public func div(attrs: Map<String, String>, children: () -> Unit): Unit {
 }
 
 public func div(children: () -> Unit): Unit {
-    div(Map<String, String>(), children)
+    div(HashMap<String, String>(), children)
 }
 
 public func span(attrs: Map<String, String>, children: () -> Unit): Unit {
@@ -101,7 +101,7 @@ public func span(attrs: Map<String, String>, children: () -> Unit): Unit {
 }
 
 public func span(children: () -> Unit): Unit {
-    span(Map<String, String>(), children)
+    span(HashMap<String, String>(), children)
 }
 
 public func p(attrs: Map<String, String>, text: String): Unit {
@@ -110,7 +110,7 @@ public func p(attrs: Map<String, String>, text: String): Unit {
 }
 
 public func p(text: String): Unit {
-    p(Map<String, String>(), text)
+    p(HashMap<String, String>(), text)
 }
 
 public func h1(text: String): Unit {
@@ -144,7 +144,7 @@ public func a(attrs: Map<String, String>, text: String): Unit {
 }
 
 public func a(href: String, text: String): Unit {
-    let attrs = Map<String, String>()
+    let attrs = HashMap<String, String>()
     attrs.add("href", href)
     a(attrs, text)
 }
@@ -155,7 +155,7 @@ public func img(attrs: Map<String, String>): Unit {
 }
 
 public func img(src: String, alt: String): Unit {
-    let attrs = Map<String, String>()
+    let attrs = HashMap<String, String>()
     attrs.add("src", src)
     attrs.add("alt", alt)
     img(attrs)
@@ -167,7 +167,7 @@ public func ul(attrs: Map<String, String>, children: () -> Unit): Unit {
 }
 
 public func ul(children: () -> Unit): Unit {
-    ul(Map<String, String>(), children)
+    ul(HashMap<String, String>(), children)
 }
 
 public func li(attrs: Map<String, String>, text: String): Unit {
@@ -176,17 +176,17 @@ public func li(attrs: Map<String, String>, text: String): Unit {
 }
 
 public func li(text: String): Unit {
-    li(Map<String, String>(), text)
+    li(HashMap<String, String>(), text)
 }
 
 public func br(): Unit {
     let builder = HtmlBuilder()
-    builder.selfClosing("br", Map<String, String>())
+    builder.selfClosing("br", HashMap<String, String>())
 }
 
 public func hr(): Unit {
     let builder = HtmlBuilder()
-    builder.selfClosing("hr", Map<String, String>())
+    builder.selfClosing("hr", HashMap<String, String>())
 }
 
 public func code(text: String): Unit {
@@ -200,7 +200,7 @@ public func pre(attrs: Map<String, String>, text: String): Unit {
 }
 
 public func pre(text: String): Unit {
-    pre(Map<String, String>(), text)
+    pre(HashMap<String, String>(), text)
 }
 
 public func style(css: String): Unit {
