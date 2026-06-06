@@ -1,5 +1,16 @@
-// 检测 Turnstile 验证完成
-function checkTurnstile() {
+// 检测是否在安装页面，如果是则跳转到首页
+function checkAndRedirect() {
+  if (window.location.pathname === '/install-extension') {
+    // 设置 cookie 后跳转
+    chrome.runtime.sendMessage({ action: "setCookie" }, (response) => {
+      if (response && response.success) {
+        console.log("插件已安装，跳转到首页...");
+        window.location.href = '/';
+      }
+    });
+    return;
+  }
+
   // 检查是否已经验证（cookie cj_token 存在）
   const cookies = document.cookie.split(';');
   const hasToken = cookies.some(c => c.trim().startsWith('cj_token='));
@@ -20,22 +31,7 @@ function checkTurnstile() {
 
 // 页面加载完成后检查
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', checkTurnstile);
+  document.addEventListener('DOMContentLoaded', checkAndRedirect);
 } else {
-  checkTurnstile();
+  checkAndRedirect();
 }
-
-// 监听 Turnstile 验证回调
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    if (mutation.type === 'childList') {
-      // 检查是否出现了验证成功的标记
-      const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
-      if (turnstileResponse && turnstileResponse.value) {
-        checkTurnstile();
-      }
-    }
-  });
-});
-
-observer.observe(document.body, { childList: true, subtree: true });

@@ -283,37 +283,32 @@ main(args: Array<String>): Int64 {
     host.mapGet("/install-extension") { context =>
         var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
         p += "<title>安装扩展 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
+        p += "<meta http-equiv=\"refresh\" content=\"5\">"
         p += "</head><body><div class=\"container\" style=\"padding:40px 20px\">"
-        p += "<h1 style=\"color:#fff;margin-bottom:24px\">安装 Chrome 扩展</h1>"
-        p += "<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
-        p += "<h2 style=\"color:#00ff88;font-size:1.2rem;margin-bottom:16px\">安装步骤</h2>"
+        p += "<h1 style=\"color:#fff;margin-bottom:24px\">检测到 Chrome 浏览器</h1>"
+        p += "<p style=\"color:#888;margin-bottom:32px\">Chrome 限制第三方 Cookie，图床图片无法加载。请选择：</p>"
+        p += "<div style=\"display:flex;gap:24px;flex-wrap:wrap\">"
+        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
+        p += "<h2 style=\"color:#00ff88;font-size:1.2rem;margin-bottom:16px\">安装 Chrome 扩展</h2>"
         p += "<ol style=\"color:#c0c0c8;line-height:2\">"
-        p += "<li>下载扩展文件：<a href=\"/chrome-extension.zip\" style=\"color:#00ff88\">chrome-extension.zip</a></li>"
+        p += "<li>下载扩展：<a href=\"/chrome-extension.zip\" style=\"color:#00ff88\">chrome-extension.zip</a></li>"
         p += "<li>解压到任意目录</li>"
         p += "<li>打开 Chrome，访问 <code style=\"background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px\">chrome://extensions/</code></li>"
-        p += "<li>开启右上角「开发者模式」</li>"
+        p += "<li>开启「开发者模式」</li>"
         p += "<li>点击「加载已解压的扩展程序」</li>"
-        p += "<li>选择解压后的 <code style=\"background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px\">chrome-extension</code> 文件夹</li>"
+        p += "<li>选择解压后的文件夹</li>"
         p += "</ol>"
-        p += "<p style=\"color:#888;font-size:.85rem;margin-top:24px\">安装完成后刷新页面即可正常加载图片</p>"
+        p += "<p style=\"color:#888;font-size:.85rem;margin-top:16px\">安装后自动跳转到文章页面</p>"
         p += "</div>"
-        p += "<div style=\"display:flex;gap:16px;margin-top:24px\">"
-        p += "<a href=\"/\" style=\"display:inline-block;color:#00ff88;text-decoration:none\">&larr; 返回首页</a>"
-        p += "<a href=\"/skip-extension\" style=\"display:inline-block;color:#888;text-decoration:none\">跳过，使用 Firefox</a>"
+        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
+        p += "<h2 style=\"color:#e0e0e0;font-size:1.2rem;margin-bottom:16px\">使用 Firefox 浏览器</h2>"
+        p += "<p style=\"color:#c0c0c8;line-height:1.7\">Firefox 不限制第三方 Cookie，可以直接访问图床图片。</p>"
+        p += "<a href=\"https://www.mozilla.org/firefox/\" target=\"_blank\" style=\"display:inline-block;margin-top:16px;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px\">下载 Firefox</a>"
         p += "</div>"
+        p += "</div>"
+        p += "<p style=\"color:#555;font-size:.8rem;margin-top:32px\">页面每 5 秒自动刷新，检测插件是否已安装</p>"
         p += "</div></body></html>"
         context.response.write(p)
-    }
-
-    host.mapGet("/skip-extension") { context =>
-        var opts = CookieOptions(
-            httpOnly: false,
-            secure: true,
-            sameSite: CookieSameSiteMode.Lax,
-            maxAge: Duration.day
-        )
-        context.response.cookies.append("skip_extension", "true", opts)
-        context.response.write("<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;url=/\"></head><body></body></html>")
     }
 
     host.run("http://127.0.0.1:996")
