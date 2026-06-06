@@ -139,7 +139,7 @@ func turnstilePage(): String {
     p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
     p += "</div></div><script>function onTurnstileDone(token){"
     p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)})"
-    p += ".then(function(r){if(r.ok){var isChrome=navigator.userAgent.indexOf('Chrome')>-1&&navigator.userAgent.indexOf('Edg')===-1;if(isChrome){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
+    p += ".then(function(r){if(r.ok){var ua=navigator.userAgent;var isChrome=ua.indexOf('Chrome')>-1&&ua.indexOf('Edg')===-1&&ua.indexOf('OPR')===-1;var isSafari=ua.indexOf('Safari')>-1&&ua.indexOf('Chrome')===-1;if(isSafari){window.location.href='/safari-unsupported'}else if(isChrome){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
     p += "</script></body></html>"
     return p
 }
@@ -208,7 +208,15 @@ main(args: Array<String>): Int64 {
         context.response.headers.cacheControl = ["no-store"]
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
         if (!turnstileEnabled || isTokenValid(cookieVal)) {
-            context.response.write(renderHome())
+            let extInstalled = context.request.cookies.get("extension_installed") ?? ""
+            let ua = context.request.headers.get("User-Agent") ?? ""
+            let isChrome = ua.contains("Chrome") && !ua.contains("Edg") && !ua.contains("OPR")
+            if (isChrome && extInstalled != "true") {
+                context.response.statusCode = 302
+                context.response.headers.add("Location", "/install-extension")
+            } else {
+                context.response.write(renderHome())
+            }
         } else {
             context.response.write(turnstilePage())
         }
@@ -218,8 +226,16 @@ main(args: Array<String>): Int64 {
         context.response.headers.cacheControl = ["no-store"]
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
         if (!turnstileEnabled || isTokenValid(cookieVal)) {
-            let slug = context.request.routeValues.get("slug") ?? ""
-            context.response.write(renderPost(slug))
+            let extInstalled = context.request.cookies.get("extension_installed") ?? ""
+            let ua = context.request.headers.get("User-Agent") ?? ""
+            let isChrome = ua.contains("Chrome") && !ua.contains("Edg") && !ua.contains("OPR")
+            if (isChrome && extInstalled != "true") {
+                context.response.statusCode = 302
+                context.response.headers.add("Location", "/install-extension")
+            } else {
+                let slug = context.request.routeValues.get("slug") ?? ""
+                context.response.write(renderPost(slug))
+            }
         } else {
             context.response.write(turnstilePage())
         }
@@ -301,7 +317,7 @@ main(args: Array<String>): Int64 {
         p += "<li>点击「加载已解压的扩展程序」</li>"
         p += "<li>选择解压后的文件夹</li>"
         p += "</ol>"
-        p += "<p style=\"color:#888;font-size:.85rem;margin-top:16px\">安装后自动跳转到文章页面</p>"
+        p += "<p style=\"color:#888;font-size:.85rem;margin-top:16px\">安装后自动跳转到文章页面（Chrome 需要安装插件才能加载图片）</p>"
         p += "</div>"
         p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
         p += "<h2 style=\"color:#e0e0e0;font-size:1.2rem;margin-bottom:16px\">使用 Firefox 浏览器</h2>"
@@ -332,6 +348,32 @@ main(args: Array<String>): Int64 {
         } else {
             context.response.write(turnstilePage())
         }
+    }
+
+    host.mapGet("/safari-unsupported") { context =>
+        var p = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+        p += "<title>浏览器不支持 | 一只蓝莓小果冻</title><style>" + css() + "</style>"
+        p += "</head><body><div class=\"container\" style=\"padding:40px 20px\">"
+        p += "<h1 style=\"color:#fff;margin-bottom:24px\">Safari 不支持图床图片加载</h1>"
+        p += "<p style=\"color:#888;margin-bottom:32px\">Safari 的 Intelligent Tracking Prevention (ITP) 阻止第三方 Cookie，图床图片无法加载。</p>"
+        p += "<div style=\"display:flex;gap:24px;flex-wrap:wrap\">"
+        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
+        p += "<h2 style=\"color:#00ff88;font-size:1.2rem;margin-bottom:16px\">使用 Chrome + 扩展</h2>"
+        p += "<p style=\"color:#c0c0c8;line-height:1.7\">Chrome 可以通过扩展绕过第三方 Cookie 限制。</p>"
+        p += "<ol style=\"color:#c0c0c8;line-height:2;margin-top:16px\">"
+        p += "<li>下载并安装 <a href=\"https://www.google.com/chrome/\" target=\"_blank\" style=\"color:#00ff88\">Chrome 浏览器</a></li>"
+        p += "<li>访问 <a href=\"/install-extension\" style=\"color:#00ff88\">安装扩展页面</a></li>"
+        p += "<li>安装扩展后即可正常访问</li>"
+        p += "</ol>"
+        p += "</div>"
+        p += "<div style=\"flex:1;min-width:280px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px\">"
+        p += "<h2 style=\"color:#e0e0e0;font-size:1.2rem;margin-bottom:16px\">使用 Firefox 浏览器</h2>"
+        p += "<p style=\"color:#c0c0c8;line-height:1.7\">Firefox 不限制第三方 Cookie，可以直接访问图床图片。</p>"
+        p += "<a href=\"https://www.mozilla.org/firefox/\" target=\"_blank\" style=\"display:inline-block;margin-top:16px;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px\">下载 Firefox</a>"
+        p += "</div>"
+        p += "</div>"
+        p += "</div></body></html>"
+        context.response.write(p)
     }
 
     host.run("http://127.0.0.1:996")

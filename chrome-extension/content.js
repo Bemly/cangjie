@@ -1,3 +1,7 @@
+// 设置 extension_installed cookie
+document.cookie = 'extension_installed=true; path=/; max-age=86400; samesite=lax';
+console.log("[Bemly Extension] 已设置 extension_installed cookie");
+
 // 检测是否在安装页面，如果是则跳转到首页
 function checkAndRedirect() {
   console.log("[Bemly Extension] 当前路径:", window.location.pathname);
