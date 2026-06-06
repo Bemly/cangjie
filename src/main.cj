@@ -136,7 +136,7 @@ func turnstilePage(): String {
     p += "<div class=\"cf-turnstile\" data-sitekey=\"" + SITE_KEY + "\" data-callback=\"onTurnstileDone\"></div>"
     p += "</div></div><script>function onTurnstileDone(token){"
     p += "fetch('/verify-turnstile',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'token='+encodeURIComponent(token)})"
-    p += ".then(function(r){if(r.ok){var isChrome=navigator.userAgent.indexOf('Chrome')>-1&&navigator.userAgent.indexOf('Edg')===-1;if(isChrome){document.body.innerHTML='<div class=\\'turnstile-wrap\\'><div class=\\'turnstile-box\\'><div class=\\'logo\\'>&#x1FAD0;</div><p>检测到您使用的是 Chrome 浏览器</p><p style=\\'color:#888;font-size:.85rem;margin-bottom:24px\\'>Chrome 限制第三方 Cookie，图床图片可能无法加载</p><div style=\\'display:flex;gap:16px;justify-content:center\\'><a href=\\'/install-extension\\' style=\\'display:inline-block;padding:12px 24px;background:#00ff88;color:#0a0a10;text-decoration:none;border-radius:8px;font-weight:bold\\'>安装插件</a><a href=\\'https://www.mozilla.org/firefox/\\' target=\\'_blank\\' style=\\'display:inline-block;padding:12px 24px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px\\'>使用 Firefox</a></div></div></div>'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
+    p += ".then(function(r){if(r.ok){var isChrome=navigator.userAgent.indexOf('Chrome')>-1&&navigator.userAgent.indexOf('Edg')===-1;if(isChrome){window.location.href='/install-extension'}else{location.reload()}}else alert('验证失败，请刷新重试')})}"
     p += "</script></body></html>"
     return p
 }
@@ -297,9 +297,23 @@ main(args: Array<String>): Int64 {
         p += "</ol>"
         p += "<p style=\"color:#888;font-size:.85rem;margin-top:24px\">安装完成后刷新页面即可正常加载图片</p>"
         p += "</div>"
-        p += "<a href=\"/\" style=\"display:inline-block;color:#00ff88;text-decoration:none;margin-top:24px\">&larr; 返回首页</a>"
+        p += "<div style=\"display:flex;gap:16px;margin-top:24px\">"
+        p += "<a href=\"/\" style=\"display:inline-block;color:#00ff88;text-decoration:none\">&larr; 返回首页</a>"
+        p += "<a href=\"/skip-extension\" style=\"display:inline-block;color:#888;text-decoration:none\">跳过，使用 Firefox</a>"
+        p += "</div>"
         p += "</div></body></html>"
         context.response.write(p)
+    }
+
+    host.mapGet("/skip-extension") { context =>
+        var opts = CookieOptions(
+            httpOnly: false,
+            secure: true,
+            sameSite: CookieSameSiteMode.Lax,
+            maxAge: Duration.day
+        )
+        context.response.cookies.append("skip_extension", "true", opts)
+        context.response.write("<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;url=/\"></head><body></body></html>")
     }
 
     host.run("http://127.0.0.1:996")
