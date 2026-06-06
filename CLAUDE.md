@@ -153,12 +153,12 @@ cjpm update
 cjpm build
 
 # 2. 从 NAS 下载二进制到本机 Mac，再上传 VPS（NAS 无 VPS 密钥）
-scp bemly@192.168.1.162:/vol1/1000/仓颉网站开发/cangjie/target/release/bin/main /tmp/bemlyCJWeb
-scp -i "<pem路径>" /tmp/bemlyCJWeb root@39.98.118.81:/home/bemlyCJWeb/bemlyCJWeb
+scp bemly@<nas-host>:/vol1/1000/仓颉网站开发/cangjie/target/release/bin/main /tmp/bemlyCJWeb
+scp -i "<pem路径>" /tmp/bemlyCJWeb root@<vps-host>:/home/bemlyCJWeb/bemlyCJWeb
 rm /tmp/bemlyCJWeb
 
 # 3. 重启 VPS 服务
-ssh -i "<pem路径>" root@39.98.118.81 systemctl restart bemlyCJWeb
+ssh -i "<pem路径>" root@<vps-host> systemctl restart bemlyCJWeb
 ```
 
 ## 域名
