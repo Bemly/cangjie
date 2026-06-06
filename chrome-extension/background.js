@@ -2,6 +2,7 @@
 function setRelayCookie() {
   const expiryDate = Math.floor(Date.now() / 1000) + 86400; // 1天后
 
+  console.log("[Bemly Background] 开始设置 cookie...");
   chrome.cookies.set({
     url: "https://bemly-moe.5ddd.com/",
     name: "mode",
@@ -13,15 +14,16 @@ function setRelayCookie() {
     expirationDate: expiryDate
   }, (cookie) => {
     if (chrome.runtime.lastError) {
-      console.error("设置 cookie 失败:", chrome.runtime.lastError);
+      console.error("[Bemly Background] 设置 cookie 失败:", chrome.runtime.lastError);
     } else {
-      console.log("Cookie 已设置:", cookie);
+      console.log("[Bemly Background] Cookie 已设置:", cookie);
     }
   });
 }
 
 // 监听来自 content script 的消息
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("[Bemly Background] 收到消息:", request);
   if (request.action === "setCookie") {
     setRelayCookie();
     sendResponse({ success: true });
@@ -30,5 +32,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // 扩展安装时设置 cookie
 chrome.runtime.onInstalled.addListener(() => {
+  console.log("[Bemly Background] 扩展已安装");
   setRelayCookie();
 });
