@@ -1,0 +1,16 @@
+[package]
+cjc-version = "1.1.0"
+name = "html_builder"
+description = "HTML Builder DSL for Cangjie"
+version = "1.0.0"
+target-dir = ""
+src-dir = ""
+output-type = "library"
+compile-option = ""
+override-compile-option = ""
+link-option = ""
+package-configuration = {}
+
+[dependencies]
+
+[target]
