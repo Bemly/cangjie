@@ -8,6 +8,7 @@ import std.collection.*
 import std.convert.*
 import std.env.*
 import std.time.*
+import std.fs.*
 import stdx.log.*
 import stdx.logger.*
 import stdx.net.http.*
@@ -315,11 +316,11 @@ main(args: Array<String>): Int64 {
         context.response.headers.cacheControl = ["no-store"]
         context.response.headers.add("Content-Type", "application/zip")
         context.response.headers.add("Content-Disposition", "attachment; filename=\"chrome-extension.zip\"")
-        var file = File("chrome-extension.zip")
-        if (file.exists()) {
+        try {
+            var file = File("chrome-extension.zip")
             var bytes = file.readBytes()
             context.response.write(bytes)
-        } else {
+        } catch (e: Exception) {
             context.response.statusCode = 404
             context.response.write("File not found")
         }
