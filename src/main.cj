@@ -11,25 +11,26 @@ import std.fs.*
 import std.io.*
 import stdx.log.*
 import stdx.logger.*
+import std.convert.*
 import bemlyCJWeb.model.*
 import bemlyCJWeb.views.*
 import bemlyCJWeb.posts.*
 import bemlyCJWeb.turnstile.*
 
 let log = SimpleLogger(getStdOut())
-let posts = ArrayList<Post>()
+let postList = ArrayList<Post>()
 let config = Config()
 let turnstileState = TurnstileState()
 
 func initPosts() {
-    posts.add(getArchLinux400mbPost())
-    posts.add(getKernel71rc3bbrPost())
-    posts.add(getCloudServerJourneyPost())
-    posts.add(getJavaverseChatPost())
-    posts.add(getAzureOpenaiPost())
-    posts.add(getFnnasBypassPost())
-    posts.add(getThirdPartyCookiePost())
-    posts.add(getChromeExtensionPost())
+    postList.add(getArchLinux400mbPost())
+    postList.add(getKernel71rc3bbrPost())
+    postList.add(getCloudServerJourneyPost())
+    postList.add(getJavaverseChatPost())
+    postList.add(getAzureOpenaiPost())
+    postList.add(getFnnasBypassPost())
+    postList.add(getThirdPartyCookiePost())
+    postList.add(getChromeExtensionPost())
 }
 
 func initConfig() {
@@ -84,7 +85,7 @@ main(args: Array<String>): Int64 {
         let cookieVal = context.request.cookies.get("cj_token") ?? ""
         if (!config.turnstileEnabled || turnstileState.isTokenValid(cookieVal)) {
             if (checkBrowser(context)) {
-                context.response.write(renderHome(posts))
+                context.response.write(renderHome(postList))
             }
         } else {
             context.response.write(renderTurnstilePage(config))
@@ -99,7 +100,7 @@ main(args: Array<String>): Int64 {
             if (checkBrowser(context)) {
                 let slug = context.request.routeValues.get("slug") ?? ""
                 var found = false
-                for (post in posts) {
+                for (post in postList) {
                     if (post.slug == slug) {
                         context.response.write(renderPost(post))
                         found = true
