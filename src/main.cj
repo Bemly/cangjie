@@ -173,18 +173,18 @@ func layout(title: String, body: String): String {
 
 func renderHome(): String {
     var body = html {
-        div(HashMap<String, String>().add("class", "container")) {
+        div(attrs("class", "container")) {
             header {
-                div(HashMap<String, String>().add("class", "logo"), "&#x1FAD0;")
+                div(attrs("class", "logo"), "&#x1FAD0;")
                 h1("一只蓝莓小果冻")
                 p("Bemly_ — Tech & Life")
             }
-            div(HashMap<String, String>().add("class", "posts")) {
+            div(attrs("class", "posts")) {
                 for (post in posts) {
-                    a(HashMap<String, String>().add("class", "post-card").add("href", "/post/" + post.slug)) {
+                    a(attrs("class", "post-card", "href", "/post/" + post.slug)) {
                         h2(post.title)
-                        div(HashMap<String, String>().add("class", "date"), post.date)
-                        div(HashMap<String, String>().add("class", "excerpt"), post.excerpt)
+                        div(attrs("class", "date"), post.date)
+                        div(attrs("class", "excerpt"), post.excerpt)
                     }
                 }
             }
@@ -198,11 +198,11 @@ func renderPost(slug: String): String {
         if (post.slug == slug) {
             var body = html {
                 article {
-                    a(HashMap<String, String>().add("class", "back-link").add("href", "/"), "← 返回首页")
+                    a(attrs("class", "back-link", "href", "/"), "← 返回首页")
                     h1(post.title)
-                    div(HashMap<String, String>().add("class", "date"), post.date)
+                    div(attrs("class", "date"), post.date)
                     raw(post.content)
-                    p(HashMap<String, String>().add("style", "color:#666;font-size:.85rem;margin-top:32px"), "转载请注明出处，好人一生平胸")
+                    p(attrs("style", "color:#666;font-size:.85rem;margin-top:32px"), "转载请注明出处，好人一生平胸")
                 }
             }
             return layout(post.title, body)
@@ -210,7 +210,7 @@ func renderPost(slug: String): String {
     }
     return layout("未找到", html {
         article {
-            a(HashMap<String, String>().add("class", "back-link").add("href", "/"), "← 返回首页")
+            a(attrs("class", "back-link", "href", "/"), "← 返回首页")
             h1("404")
             p("文章不存在")
         }
