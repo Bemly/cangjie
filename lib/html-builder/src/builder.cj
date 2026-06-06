@@ -72,16 +72,11 @@ public class HtmlBuilder {
     }
 }
 
-// 全局 builder 实例
-private var _currentBuilder: ?HtmlBuilder = None
-
-public func getCurrentBuilder(): HtmlBuilder {
-    if (let Some(b) <- _currentBuilder) {
-        return b
-    }
-    let b = HtmlBuilder()
-    _currentBuilder = b
-    return b
+// 每次调用 html{} 都创建新实例，避免并发问题
+public func html(children: (HtmlBuilder) -> Unit): String {
+    let builder = HtmlBuilder()
+    children(builder)
+    return builder.build()
 }
 
 public func attrs(key: String, value: String): HashMap<String, String> {
@@ -107,258 +102,206 @@ public func attrs(k1: String, v1: String, k2: String, v2: String, k3: String, v3
 
 // ========== 容器标签 ==========
 
-public func html(children: () -> Unit): String {
-    let builder = HtmlBuilder()
-    _currentBuilder = builder
-    builder.openTag("html", HashMap<String, String>())
+public func head(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("head", HashMap<String, String>())
     children()
-    builder.closeTag("html")
-    _currentBuilder = None
-    return builder.build()
+    b.closeTag("head")
 }
 
-public func head(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("head", HashMap<String, String>())
+public func body(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("body", HashMap<String, String>())
     children()
-    builder.closeTag("head")
+    b.closeTag("body")
 }
 
-public func body(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("body", HashMap<String, String>())
+public func div(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("div", HashMap<String, String>())
     children()
-    builder.closeTag("body")
+    b.closeTag("div")
 }
 
-public func div(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("div", HashMap<String, String>())
+public func div(b: HtmlBuilder, attrs: HashMap<String, String>, children: () -> Unit): Unit {
+    b.openTag("div", attrs)
     children()
-    builder.closeTag("div")
+    b.closeTag("div")
 }
 
-public func div(attrs: HashMap<String, String>, children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("div", attrs)
+public func span(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("span", HashMap<String, String>())
     children()
-    builder.closeTag("div")
+    b.closeTag("span")
 }
 
-public func span(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("span", HashMap<String, String>())
+public func span(b: HtmlBuilder, attrs: HashMap<String, String>, children: () -> Unit): Unit {
+    b.openTag("span", attrs)
     children()
-    builder.closeTag("span")
+    b.closeTag("span")
 }
 
-public func span(attrs: HashMap<String, String>, children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("span", attrs)
+public func header(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("header", HashMap<String, String>())
     children()
-    builder.closeTag("span")
+    b.closeTag("header")
 }
 
-public func header(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("header", HashMap<String, String>())
+public func footer(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("footer", HashMap<String, String>())
     children()
-    builder.closeTag("header")
+    b.closeTag("footer")
 }
 
-public func footer(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("footer", HashMap<String, String>())
+public func article(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("article", HashMap<String, String>())
     children()
-    builder.closeTag("footer")
+    b.closeTag("article")
 }
 
-public func article(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("article", HashMap<String, String>())
+public func ul(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("ul", HashMap<String, String>())
     children()
-    builder.closeTag("article")
+    b.closeTag("ul")
 }
 
-public func ul(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("ul", HashMap<String, String>())
+public func ul(b: HtmlBuilder, attrs: HashMap<String, String>, children: () -> Unit): Unit {
+    b.openTag("ul", attrs)
     children()
-    builder.closeTag("ul")
+    b.closeTag("ul")
 }
 
-public func ul(attrs: HashMap<String, String>, children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("ul", attrs)
+public func table(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("table", HashMap<String, String>())
     children()
-    builder.closeTag("ul")
+    b.closeTag("table")
 }
 
-public func table(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("table", HashMap<String, String>())
+public func tr(b: HtmlBuilder, children: () -> Unit): Unit {
+    b.openTag("tr", HashMap<String, String>())
     children()
-    builder.closeTag("table")
-}
-
-public func tr(children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("tr", HashMap<String, String>())
-    children()
-    builder.closeTag("tr")
+    b.closeTag("tr")
 }
 
 // ========== 文本标签 ==========
 
-public func title(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("title", HashMap<String, String>(), text)
+public func title(b: HtmlBuilder, text: String): Unit {
+    b.textTag("title", HashMap<String, String>(), text)
 }
 
-public func h1(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h1", HashMap<String, String>(), text)
+public func h1(b: HtmlBuilder, text: String): Unit {
+    b.textTag("h1", HashMap<String, String>(), text)
 }
 
-public func h1(attrs: HashMap<String, String>, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h1", attrs, text)
+public func h1(b: HtmlBuilder, attrs: HashMap<String, String>, text: String): Unit {
+    b.textTag("h1", attrs, text)
 }
 
-public func h2(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h2", HashMap<String, String>(), text)
+public func h2(b: HtmlBuilder, text: String): Unit {
+    b.textTag("h2", HashMap<String, String>(), text)
 }
 
-public func h2(attrs: HashMap<String, String>, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h2", attrs, text)
+public func h2(b: HtmlBuilder, attrs: HashMap<String, String>, text: String): Unit {
+    b.textTag("h2", attrs, text)
 }
 
-public func h3(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h3", HashMap<String, String>(), text)
+public func h3(b: HtmlBuilder, text: String): Unit {
+    b.textTag("h3", HashMap<String, String>(), text)
 }
 
-public func h3(attrs: HashMap<String, String>, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h3", attrs, text)
+public func h3(b: HtmlBuilder, attrs: HashMap<String, String>, text: String): Unit {
+    b.textTag("h3", attrs, text)
 }
 
-public func h4(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h4", HashMap<String, String>(), text)
+public func h4(b: HtmlBuilder, text: String): Unit {
+    b.textTag("h4", HashMap<String, String>(), text)
 }
 
-public func h4(attrs: HashMap<String, String>, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("h4", attrs, text)
+public func h4(b: HtmlBuilder, attrs: HashMap<String, String>, text: String): Unit {
+    b.textTag("h4", attrs, text)
 }
 
-public func p(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("p", HashMap<String, String>(), text)
+public func p(b: HtmlBuilder, text: String): Unit {
+    b.textTag("p", HashMap<String, String>(), text)
 }
 
-public func p(attrs: HashMap<String, String>, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("p", attrs, text)
+public func p(b: HtmlBuilder, attrs: HashMap<String, String>, text: String): Unit {
+    b.textTag("p", attrs, text)
 }
 
-public func li(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("li", HashMap<String, String>(), text)
+public func li(b: HtmlBuilder, text: String): Unit {
+    b.textTag("li", HashMap<String, String>(), text)
 }
 
-public func td(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("td", HashMap<String, String>(), text)
+public func td(b: HtmlBuilder, text: String): Unit {
+    b.textTag("td", HashMap<String, String>(), text)
 }
 
-public func th(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("th", HashMap<String, String>(), text)
+public func th(b: HtmlBuilder, text: String): Unit {
+    b.textTag("th", HashMap<String, String>(), text)
 }
 
-public func code(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("code", HashMap<String, String>(), text)
+public func code(b: HtmlBuilder, text: String): Unit {
+    b.textTag("code", HashMap<String, String>(), text)
 }
 
-public func pre(text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("pre", HashMap<String, String>(), text)
+public func pre(b: HtmlBuilder, text: String): Unit {
+    b.textTag("pre", HashMap<String, String>(), text)
 }
 
-public func style(css: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("style", HashMap<String, String>(), css)
+public func style(b: HtmlBuilder, css: String): Unit {
+    b.textTag("style", HashMap<String, String>(), css)
 }
 
-public func script(js: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("script", HashMap<String, String>(), js)
+public func script(b: HtmlBuilder, js: String): Unit {
+    b.textTag("script", HashMap<String, String>(), js)
 }
 
 // ========== 链接/媒体 ==========
 
-public func a(href: String, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("a", attrs("href", href), text)
+public func a(b: HtmlBuilder, href: String, text: String): Unit {
+    b.textTag("a", attrs("href", href), text)
 }
 
-public func a(attrs: HashMap<String, String>, text: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.textTag("a", attrs, text)
+public func a(b: HtmlBuilder, attrs: HashMap<String, String>, text: String): Unit {
+    b.textTag("a", attrs, text)
 }
 
-public func a(attrs: HashMap<String, String>, children: () -> Unit): Unit {
-    let builder = getCurrentBuilder()
-    builder.openTag("a", attrs)
+public func a(b: HtmlBuilder, attrs: HashMap<String, String>, children: () -> Unit): Unit {
+    b.openTag("a", attrs)
     children()
-    builder.closeTag("a")
+    b.closeTag("a")
 }
 
-public func img(src: String, alt: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.selfClosingTag("img", attrs("src", src, "alt", alt))
+public func img(b: HtmlBuilder, src: String, alt: String): Unit {
+    b.selfClosingTag("img", attrs("src", src, "alt", alt))
 }
 
-public func img(attrs: HashMap<String, String>): Unit {
-    let builder = getCurrentBuilder()
-    builder.selfClosingTag("img", attrs)
+public func img(b: HtmlBuilder, attrs: HashMap<String, String>): Unit {
+    b.selfClosingTag("img", attrs)
 }
 
 // ========== 自闭合标签 ==========
 
-public func br(): Unit {
-    let builder = getCurrentBuilder()
-    builder.selfClosingTag("br", HashMap<String, String>())
+public func br(b: HtmlBuilder): Unit {
+    b.selfClosingTag("br", HashMap<String, String>())
 }
 
-public func hr(): Unit {
-    let builder = getCurrentBuilder()
-    builder.selfClosingTag("hr", HashMap<String, String>())
+public func hr(b: HtmlBuilder): Unit {
+    b.selfClosingTag("hr", HashMap<String, String>())
 }
 
-public func meta(attrs: HashMap<String, String>): Unit {
-    let builder = getCurrentBuilder()
-    builder.selfClosingTag("meta", attrs)
+public func meta(b: HtmlBuilder, attrs: HashMap<String, String>): Unit {
+    b.selfClosingTag("meta", attrs)
 }
 
-public func link(attrs: HashMap<String, String>): Unit {
-    let builder = getCurrentBuilder()
-    builder.selfClosingTag("link", attrs)
+public func link(b: HtmlBuilder, attrs: HashMap<String, String>): Unit {
+    b.selfClosingTag("link", attrs)
 }
 
 // ========== 原始 HTML ==========
 
-public func raw(html: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.raw(html)
+public func raw(b: HtmlBuilder, html: String): Unit {
+    b.raw(html)
 }
 
-public func text(content: String): Unit {
-    let builder = getCurrentBuilder()
-    builder.text(content)
+public func text(b: HtmlBuilder, content: String): Unit {
+    b.text(content)
 }
