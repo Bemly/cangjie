@@ -152,7 +152,7 @@ func turnstilePage(): String {
     }
 }
 
-func footer(): String {
+func renderFooter(): String {
     return html {
         footer {
             div(attrs("class", "divider")) {}
@@ -182,7 +182,7 @@ func layout(title: String, bodyHtml: String): String {
         }
         body {
             raw(bodyHtml)
-            raw(footer())
+            raw(renderFooter())
             raw(js)
         }
     }

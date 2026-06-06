@@ -166,6 +166,13 @@ public func header(children: () -> Unit): Unit {
     builder.closeTag("header")
 }
 
+public func footer(children: () -> Unit): Unit {
+    let builder = getCurrentBuilder()
+    builder.openTag("footer", HashMap<String, String>())
+    children()
+    builder.closeTag("footer")
+}
+
 public func article(children: () -> Unit): Unit {
     let builder = getCurrentBuilder()
     builder.openTag("article", HashMap<String, String>())
@@ -213,9 +220,19 @@ public func h1(text: String): Unit {
     builder.textTag("h1", HashMap<String, String>(), text)
 }
 
+public func h1(attrs: HashMap<String, String>, text: String): Unit {
+    let builder = getCurrentBuilder()
+    builder.textTag("h1", attrs, text)
+}
+
 public func h2(text: String): Unit {
     let builder = getCurrentBuilder()
     builder.textTag("h2", HashMap<String, String>(), text)
+}
+
+public func h2(attrs: HashMap<String, String>, text: String): Unit {
+    let builder = getCurrentBuilder()
+    builder.textTag("h2", attrs, text)
 }
 
 public func h3(text: String): Unit {
@@ -223,9 +240,19 @@ public func h3(text: String): Unit {
     builder.textTag("h3", HashMap<String, String>(), text)
 }
 
+public func h3(attrs: HashMap<String, String>, text: String): Unit {
+    let builder = getCurrentBuilder()
+    builder.textTag("h3", attrs, text)
+}
+
 public func h4(text: String): Unit {
     let builder = getCurrentBuilder()
     builder.textTag("h4", HashMap<String, String>(), text)
+}
+
+public func h4(attrs: HashMap<String, String>, text: String): Unit {
+    let builder = getCurrentBuilder()
+    builder.textTag("h4", attrs, text)
 }
 
 public func p(text: String): Unit {
