@@ -59,6 +59,13 @@ Supported tags: `html`, `head`, `body`, `div`, `span`, `h1`-`h4`, `p`, `title`, 
 
 Special: `raw(html)` for raw HTML, `text(content)` for escaped text
 
+Attribute helpers:
+```cangjie
+attrs("class", "container")                              // single attr
+attrs("class", "post-card", "href", "/post/xxx")         // two attrs
+attrs("k1", "v1", "k2", "v2", "k3", "v3")               // three attrs
+```
+
 ## Image Bed
 
 Image bed is implemented via FlyBull NAS nginx static file server:

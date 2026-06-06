@@ -99,6 +99,13 @@ let page = html {
 
 特殊功能：`raw(html)` 插入原始 HTML，`text(content)` 插入文本（自动转义）
 
+属性构建：
+```cangjie
+attrs("class", "container")                              // 单个属性
+attrs("class", "post-card", "href", "/post/xxx")         // 两个属性
+attrs("k1", "v1", "k2", "v2", "k3", "v3")               // 三个属性
+```
+
 ## 运行时依赖
 
 VPS 上运行博客需要以下文件：
