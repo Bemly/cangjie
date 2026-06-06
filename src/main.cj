@@ -315,16 +315,21 @@ main(args: Array<String>): Int64 {
 
     host.mapGet("/chrome-extension.zip") { context =>
         context.response.headers.cacheControl = ["no-store"]
-        context.response.headers.add("Content-Type", "application/zip")
-        context.response.headers.add("Content-Disposition", "attachment; filename=\"chrome-extension.zip\"")
-        try {
-            var file = File("chrome-extension.zip", Read)
-            var bytes = readToEnd(file)
-            file.close()
-            context.response.write(bytes)
-        } catch (e: Exception) {
-            context.response.statusCode = 404
-            context.response.write("File not found")
+        let cookieVal = context.request.cookies.get("cj_token") ?? ""
+        if (!turnstileEnabled || isTokenValid(cookieVal)) {
+            context.response.headers.add("Content-Type", "application/zip")
+            context.response.headers.add("Content-Disposition", "attachment; filename=\"chrome-extension.zip\"")
+            try {
+                var file = File("chrome-extension.zip", Read)
+                var bytes = readToEnd(file)
+                file.close()
+                context.response.write(bytes)
+            } catch (e: Exception) {
+                context.response.statusCode = 404
+                context.response.write("File not found")
+            }
+        } else {
+            context.response.write(turnstilePage())
         }
     }
 
