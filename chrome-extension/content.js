@@ -15,28 +15,26 @@ function checkAndRedirect() {
     return;
   }
 
-  // 检查是否已经验证（cookie cj_token 存在）
-  const cookies = document.cookie.split(';');
-  console.log("[Bemly Extension] 当前 cookies:", cookies);
-  const hasToken = cookies.some(c => c.trim().startsWith('cj_token='));
-  console.log("[Bemly Extension] hasToken:", hasToken);
+  // 检测是否有 data-src 图片（说明页面已加载，Turnstile 验证通过）
+  const images = document.querySelectorAll('img[data-src]');
+  console.log("[Bemly Extension] 找到 data-src 图片数量:", images.length);
 
-  if (hasToken) {
-    console.log("[Bemly Extension] 验证通过，设置 cookie...");
+  if (images.length > 0) {
+    console.log("[Bemly Extension] 检测到图片，设置 cookie...");
     // 通知后台脚本设置 cookie
     chrome.runtime.sendMessage({ action: "setCookie" }, (response) => {
       console.log("[Bemly Extension] setCookie 响应:", response);
       if (response && response.success) {
         console.log("[Bemly Extension] Cookie 已设置，重新加载图片...");
         // 重新加载所有 data-src 图片
-        document.querySelectorAll('img[data-src]').forEach(img => {
+        images.forEach(img => {
           console.log("[Bemly Extension] 加载图片:", img.dataset.src);
           img.src = img.dataset.src;
         });
       }
     });
   } else {
-    console.log("[Bemly Extension] 未检测到验证 token");
+    console.log("[Bemly Extension] 未检测到 data-src 图片");
   }
 }
 
