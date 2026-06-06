@@ -156,26 +156,18 @@ func footer(): String {
     return f
 }
 
-func layout(title: String, body: String): String {
+func layout(title: String, bodyHtml: String): String {
     var js = "<script>document.addEventListener('DOMContentLoaded',function(){var d=new Date();d.setTime(d.getTime()+86400000);document.cookie='mode=relay;path=/;expires='+d.toUTCString()+';samesite=none;secure;partitioned';document.querySelectorAll('img[data-src]').forEach(function(img){fetch(img.dataset.src,{credentials:'include'}).then(function(r){return r.blob()}).then(function(b){img.src=URL.createObjectURL(b)}).catch(function(){img.src=img.dataset.src})})})</script>"
-    return html {
-        head {
-            title("${title} | 一只蓝莓小果冻")
-            raw("<style>${css()}</style>")
-        }
-        body {
-            raw(body)
-            raw(footer())
-            raw(js)
-        }
-    }
+    return "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>${title} | 一只蓝莓小果冻</title><style>${css()}</style></head><body>${bodyHtml}${footer()}${js}</body></html>"
 }
 
 func renderHome(): String {
     var body = html {
         div(attrs("class", "container")) {
             header {
-                div(attrs("class", "logo"), "&#x1FAD0;")
+                div(attrs("class", "logo")) {
+                    raw("&#x1FAD0;")
+                }
                 h1("一只蓝莓小果冻")
                 p("Bemly_ — Tech & Life")
             }
@@ -183,8 +175,12 @@ func renderHome(): String {
                 for (post in posts) {
                     a(attrs("class", "post-card", "href", "/post/" + post.slug)) {
                         h2(post.title)
-                        div(attrs("class", "date"), post.date)
-                        div(attrs("class", "excerpt"), post.excerpt)
+                        div(attrs("class", "date")) {
+                            text(post.date)
+                        }
+                        div(attrs("class", "excerpt")) {
+                            text(post.excerpt)
+                        }
                     }
                 }
             }
@@ -200,7 +196,9 @@ func renderPost(slug: String): String {
                 article {
                     a(attrs("class", "back-link", "href", "/"), "← 返回首页")
                     h1(post.title)
-                    div(attrs("class", "date"), post.date)
+                    div(attrs("class", "date")) {
+                        text(post.date)
+                    }
                     raw(post.content)
                     p(attrs("style", "color:#666;font-size:.85rem;margin-top:32px"), "转载请注明出处，好人一生平胸")
                 }
