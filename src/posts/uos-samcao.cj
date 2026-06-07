@@ -19,6 +19,7 @@ public func getUosSamcaoPost(): Post {
             p(b, "3. 屏幕上会打印一个二维码")
             p(b, "4. 扫码屏幕二维码——点击激活——手机上会有一个离线激活码")
             p(b, "5. 在设备上填入这个离线激活码——回车——激活成功")
+            img(b, attrs("data-src", "https://bemly-moe.5ddd.com/cangjie/uos-samcao/uos-activation.avif", "alt", "UOS离线激活", "style", "max-width:100%"))
             p(b, "samcao的博客主要关注UOS相关技术，共有75篇UOS相关随笔，涵盖系统安装、配置、故障排除等多个方面。")
             a(b, attrs("href", "https://www.cnblogs.com/drgcaosheng/p/12808987.html"), "阅读原文")
         }
