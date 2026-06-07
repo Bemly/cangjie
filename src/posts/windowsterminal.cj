@@ -16,6 +16,7 @@ public func getWindowsTerminalPost(): Post {
             p(b, "useAcrylic：设为 true 开启亚克力效果。")
             p(b, "acrylicOpacity：亚克力效果强度，1是效果最小，0.1是最强。过于模糊的效果在浅色背景下会影响阅读代码，所以在0.4-0.6之间比较合适。")
             p(b, "配置示例：在defaults中添加 fontFace: \"Menlo\", experimental.retroTerminalEffect: true, useAcrylic: true, acrylicOpacity: 0.6 即可获得复古亚克力效果。")
+            img(b, attrs("data-src", "https://bemly-moe.5ddd.com/cangjie/windowsterminal/terminal-appearance.avif", "alt", "Windows Terminal外观", "style", "max-width:100%"))
             a(b, attrs("href", "https://www.cnblogs.com/zhangz0126/p/14436523.html"), "阅读原文")
         }
     )
