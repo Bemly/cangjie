@@ -23,6 +23,7 @@ public func getIpipRanriqingPost(): Post {
             h2(b, "在Iptables中调用Ipset完成拦截")
             p(b, "Iptables中的指令有从上到下匹配顺序的，我们需要注意拦截指令顺序。假设我们已经有Iptables指令，需要通过iptables -I指令插入到现有INPUT链中。关键指令：iptables -I INPUT 5 -m set ! --match-set china src -j DROP")
             p(b, "如果没有启用Iptables，可以通过脚本清除重建Iptables。关键规则包括：允许本机连接、允许已建立的连接、允许ICMP协议、匹配china链非国内IP直接丢弃、开放特定端口（如80、443、5060等）。")
+            img(b, attrs("data-src", "https://bemly-moe.5ddd.com/cangjie/ipip-ranriqing/ip-filter.avif", "alt", "IP过滤示意图", "style", "max-width:100%"))
             h2(b, "持久化规则")
             p(b, "让服务器重启时通过脚本加载数据：ipset save china > /etc/ipset.conf，然后在rc.local中添加恢复命令。Iptables规则也需要持久化：iptables-save > /etc/sysconfig/iptables。")
             a(b, attrs("href", "https://www.cnblogs.com/ranriqing/p/16693099.html"), "阅读原文")
